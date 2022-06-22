@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WeBlog.Models
@@ -31,5 +32,8 @@ namespace WeBlog.Models
         [NotMapped]
         public IFormFile Image { get; set; }
 
+        // Navigation Properties
+        public virtual IdentityUser Author { get; set; }
+        public virtual ICollection<Post> Posts { get; set; } = new HashSet<Post>();
     }
 }
