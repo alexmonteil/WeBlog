@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
+using WeBlog.Enums;
 
 namespace WeBlog.Models
 {
@@ -28,6 +29,8 @@ namespace WeBlog.Models
         [StringLength(500, ErrorMessage = "The {0} must be at least {2} and at most {1} characters.", MinimumLength = 2)]
         [Display(Name = "Moderated Comment")]
         public string ModeratedBody { get; set; }
+
+        public ModerationType ModerationType { get; set; }
 
         //Navigation Properties
         public virtual Post Post { get; set; }
