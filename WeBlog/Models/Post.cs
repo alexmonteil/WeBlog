@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using WeBlog.Enums;
 
 namespace WeBlog.Models
 {
@@ -29,7 +30,7 @@ namespace WeBlog.Models
         [Display(Name = "Updated Date")]
         public DateTime? Updated { get; set; }
 
-        public bool IsViewable { get; set; }
+        public ReadyStatus ReadyStatus { get; set; }
         public string Slug { get; set; }
 
         public byte[] ImageData { get; set; }
