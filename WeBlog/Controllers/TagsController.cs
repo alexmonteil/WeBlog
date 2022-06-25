@@ -6,90 +6,94 @@ using WeBlog.Models;
 
 namespace WeBlog.Controllers
 {
-    public class BlogsController : Controller
+    public class TagsController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public BlogsController(ApplicationDbContext context)
+        public TagsController(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        // GET: Blogs
+        // GET: Tags
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Blogs.Include(b => b.BlogUser);
+            var applicationDbContext = _context.Tags.Include(t => t.BlogUser).Include(t => t.Post);
             return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: Blogs/Details/5
+        // GET: Tags/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Blogs == null)
+            if (id == null || _context.Tags == null)
             {
                 return NotFound();
             }
 
-            var blog = await _context.Blogs
-                .Include(b => b.BlogUser)
+            var tag = await _context.Tags
+                .Include(t => t.BlogUser)
+                .Include(t => t.Post)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (blog == null)
+            if (tag == null)
             {
                 return NotFound();
             }
 
-            return View(blog);
+            return View(tag);
         }
 
-        // GET: Blogs/Create
+        // GET: Tags/Create
         public IActionResult Create()
         {
             ViewData["BlogUserId"] = new SelectList(_context.Users, "Id", "Id");
+            ViewData["PostId"] = new SelectList(_context.Posts, "Id", "Abstract");
             return View();
         }
 
-        // POST: Blogs/Create
+        // POST: Tags/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,BlogUserId,Name,Description,Created,Updated,ImageData,ContentType")] Blog blog)
+        public async Task<IActionResult> Create([Bind("Id,PostId,BlogUserId,Text")] Tag tag)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(blog);
+                _context.Add(tag);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BlogUserId"] = new SelectList(_context.Users, "Id", "Id", blog.BlogUserId);
-            return View(blog);
+            ViewData["BlogUserId"] = new SelectList(_context.Users, "Id", "Id", tag.BlogUserId);
+            ViewData["PostId"] = new SelectList(_context.Posts, "Id", "Abstract", tag.PostId);
+            return View(tag);
         }
 
-        // GET: Blogs/Edit/5
+        // GET: Tags/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Blogs == null)
+            if (id == null || _context.Tags == null)
             {
                 return NotFound();
             }
 
-            var blog = await _context.Blogs.FindAsync(id);
-            if (blog == null)
+            var tag = await _context.Tags.FindAsync(id);
+            if (tag == null)
             {
                 return NotFound();
             }
-            ViewData["BlogUserId"] = new SelectList(_context.Users, "Id", "Id", blog.BlogUserId);
-            return View(blog);
+            ViewData["BlogUserId"] = new SelectList(_context.Users, "Id", "Id", tag.BlogUserId);
+            ViewData["PostId"] = new SelectList(_context.Posts, "Id", "Abstract", tag.PostId);
+            return View(tag);
         }
 
-        // POST: Blogs/Edit/5
+        // POST: Tags/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,BlogUserId,Name,Description,Created,Updated,ImageData,ContentType")] Blog blog)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,PostId,BlogUserId,Text")] Tag tag)
         {
-            if (id != blog.Id)
+            if (id != tag.Id)
             {
                 return NotFound();
             }
@@ -98,12 +102,12 @@ namespace WeBlog.Controllers
             {
                 try
                 {
-                    _context.Update(blog);
+                    _context.Update(tag);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!BlogExists(blog.Id))
+                    if (!TagExists(tag.Id))
                     {
                         return NotFound();
                     }
@@ -114,51 +118,53 @@ namespace WeBlog.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BlogUserId"] = new SelectList(_context.Users, "Id", "Id", blog.BlogUserId);
-            return View(blog);
+            ViewData["BlogUserId"] = new SelectList(_context.Users, "Id", "Id", tag.BlogUserId);
+            ViewData["PostId"] = new SelectList(_context.Posts, "Id", "Abstract", tag.PostId);
+            return View(tag);
         }
 
-        // GET: Blogs/Delete/5
+        // GET: Tags/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Blogs == null)
+            if (id == null || _context.Tags == null)
             {
                 return NotFound();
             }
 
-            var blog = await _context.Blogs
-                .Include(b => b.BlogUser)
+            var tag = await _context.Tags
+                .Include(t => t.BlogUser)
+                .Include(t => t.Post)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (blog == null)
+            if (tag == null)
             {
                 return NotFound();
             }
 
-            return View(blog);
+            return View(tag);
         }
 
-        // POST: Blogs/Delete/5
+        // POST: Tags/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Blogs == null)
+            if (_context.Tags == null)
             {
-                return Problem("Entity set 'ApplicationDbContext.Blogs'  is null.");
+                return Problem("Entity set 'ApplicationDbContext.Tags'  is null.");
             }
-            var blog = await _context.Blogs.FindAsync(id);
-            if (blog != null)
+            var tag = await _context.Tags.FindAsync(id);
+            if (tag != null)
             {
-                _context.Blogs.Remove(blog);
+                _context.Tags.Remove(tag);
             }
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool BlogExists(int id)
+        private bool TagExists(int id)
         {
-          return (_context.Blogs?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_context.Tags?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
