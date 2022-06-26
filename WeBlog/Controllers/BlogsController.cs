@@ -98,6 +98,7 @@ namespace WeBlog.Controllers
             {
                 try
                 {
+                    blog.Updated = DateTime.Now;
                     _context.Update(blog);
                     await _context.SaveChangesAsync();
                 }
