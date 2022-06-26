@@ -56,11 +56,12 @@ namespace WeBlog.Controllers
         {
             if (ModelState.IsValid)
             {
+                blog.Created = DateTime.Now;
                 _context.Add(blog);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BlogUserId"] = new SelectList(_context.Users, "Id", "Id", blog.BlogUserId);
+            
             return View(blog);
         }
 
