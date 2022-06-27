@@ -78,7 +78,13 @@
         </dd>
     </dl>
 </div>
-<div>
+
+<form  class="mt-2" asp-controller="Comments" asp-action="Create">
+
+</form>
+
+
+<div class="mt-2">
     <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
