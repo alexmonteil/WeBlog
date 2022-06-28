@@ -35,6 +35,9 @@ else
     app.UseHsts();
 }
 
+var dataService = app.Services.CreateScope().ServiceProvider.GetRequiredService<DataService>();
+await dataService.ManageDataAsync();
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
