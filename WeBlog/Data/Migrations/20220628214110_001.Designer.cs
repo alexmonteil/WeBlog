@@ -12,7 +12,7 @@ using WeBlog.Data;
 namespace WeBlog.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220625192334_001")]
+    [Migration("20220628214110_001")]
     partial class _001
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -165,11 +165,9 @@ namespace WeBlog.Data.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("BlogUserId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("ContentType")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("Created")
@@ -181,7 +179,6 @@ namespace WeBlog.Data.Migrations
                         .HasColumnType("character varying(500)");
 
                     b.Property<byte[]>("ImageData")
-                        .IsRequired()
                         .HasColumnType("bytea");
 
                     b.Property<string>("Name")
@@ -212,8 +209,12 @@ namespace WeBlog.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("ContentType")
-                        .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)
@@ -223,7 +224,6 @@ namespace WeBlog.Data.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("FacebookUrl")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
@@ -233,7 +233,6 @@ namespace WeBlog.Data.Migrations
                         .HasColumnType("character varying(50)");
 
                     b.Property<byte[]>("ImageData")
-                        .IsRequired()
                         .HasColumnType("bytea");
 
                     b.Property<string>("LastName")
@@ -268,7 +267,6 @@ namespace WeBlog.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("TwitterUrl")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
@@ -300,7 +298,6 @@ namespace WeBlog.Data.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("BlogUserId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Body")
@@ -318,7 +315,6 @@ namespace WeBlog.Data.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("ModeratedBody")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
 
@@ -326,7 +322,6 @@ namespace WeBlog.Data.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("ModeratorId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("PostId")
@@ -363,7 +358,6 @@ namespace WeBlog.Data.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("BlogUserId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Content")
@@ -371,21 +365,18 @@ namespace WeBlog.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("ContentType")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<byte[]>("ImageData")
-                        .IsRequired()
                         .HasColumnType("bytea");
 
                     b.Property<int>("ReadyStatus")
                         .HasColumnType("integer");
 
                     b.Property<string>("Slug")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Title")
@@ -414,7 +405,6 @@ namespace WeBlog.Data.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("BlogUserId")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("PostId")
@@ -489,9 +479,7 @@ namespace WeBlog.Data.Migrations
                 {
                     b.HasOne("WeBlog.Models.BlogUser", "BlogUser")
                         .WithMany("Blogs")
-                        .HasForeignKey("BlogUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("BlogUserId");
 
                     b.Navigation("BlogUser");
                 });
@@ -500,15 +488,11 @@ namespace WeBlog.Data.Migrations
                 {
                     b.HasOne("WeBlog.Models.BlogUser", "BlogUser")
                         .WithMany()
-                        .HasForeignKey("BlogUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("BlogUserId");
 
                     b.HasOne("WeBlog.Models.BlogUser", "Moderator")
                         .WithMany()
-                        .HasForeignKey("ModeratorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ModeratorId");
 
                     b.HasOne("WeBlog.Models.Post", "Post")
                         .WithMany("Comments")
@@ -533,9 +517,7 @@ namespace WeBlog.Data.Migrations
 
                     b.HasOne("WeBlog.Models.BlogUser", "BlogUser")
                         .WithMany("Posts")
-                        .HasForeignKey("BlogUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("BlogUserId");
 
                     b.Navigation("Blog");
 
@@ -546,9 +528,7 @@ namespace WeBlog.Data.Migrations
                 {
                     b.HasOne("WeBlog.Models.BlogUser", "BlogUser")
                         .WithMany()
-                        .HasForeignKey("BlogUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("BlogUserId");
 
                     b.HasOne("WeBlog.Models.Post", "Post")
                         .WithMany("Tags")

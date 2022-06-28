@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using WeBlog.Data;
 using WeBlog.Enums;
 using WeBlog.Models;
@@ -28,6 +29,7 @@ namespace WeBlog.Services
 
         public async Task ManageDataAsync()
         {
+            await _dbContext.Database.MigrateAsync();
             await SeedRolesAsync();
             await SeedUsersAsync();
         }
@@ -62,6 +64,7 @@ namespace WeBlog.Services
                 UserName = "alex.monteil@outlook.com",
                 FirstName = "Alex",
                 LastName = "Monteil",
+                DisplayName = "The Administrator",
                 PhoneNumber = "(612) 111-2222",
                 EmailConfirmed = true
             };
@@ -76,6 +79,7 @@ namespace WeBlog.Services
                 UserName = "moderator@weblog.com",
                 FirstName = "John",
                 LastName = "Doe",
+                DisplayName = "The Moderator",
                 PhoneNumber = "(612) 111-3333",
                 EmailConfirmed = true
             };

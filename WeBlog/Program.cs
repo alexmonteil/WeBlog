@@ -3,23 +3,31 @@ using Microsoft.EntityFrameworkCore;
 using WeBlog.Data;
 using WeBlog.Models;
 using WeBlog.Services;
+using WeBlog.ViewModels;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+// Register PostgreSQL db connection
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
+// Register Identity class for authentication
 builder.Services.AddIdentity<BlogUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddDefaultUI()
     .AddDefaultTokenProviders()
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+// Register DataService class
 builder.Services.AddScoped<DataService>();
+
+// Register pre-configured instance of MailSettings class
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+builder.Services.AddScoped<IBlogEmailSender, EmailService>();
 
 var app = builder.Build();
 
