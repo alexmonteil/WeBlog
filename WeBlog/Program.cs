@@ -22,12 +22,18 @@ builder.Services.AddIdentity<BlogUser, IdentityRole>(options => options.SignIn.R
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+
 // Register DataService class
 builder.Services.AddScoped<DataService>();
 
 // Register pre-configured instance of MailSettings class
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
+
+// Register EmailService
 builder.Services.AddScoped<IBlogEmailSender, EmailService>();
+
+// Register ImageService
+builder.Services.AddScoped<IImageService, DefaultImageService>();
 
 var app = builder.Build();
 
