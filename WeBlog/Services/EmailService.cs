@@ -1,7 +1,7 @@
 ﻿using MailKit.Net.Smtp;
 using Microsoft.Extensions.Options;
 using MimeKit;
-using WeBlog.ViewModels;
+using WeBlog.Configuration;
 
 namespace WeBlog.Services
 {

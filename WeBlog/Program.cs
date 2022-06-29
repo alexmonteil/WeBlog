@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using WeBlog.Configuration;
 using WeBlog.Data;
 using WeBlog.Models;
 using WeBlog.Services;
-using WeBlog.ViewModels;
 
 var builder = WebApplication.CreateBuilder(args);
 

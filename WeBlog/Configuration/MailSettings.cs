@@ -1,4 +1,4 @@
-﻿namespace WeBlog.ViewModels
+﻿namespace WeBlog.Configuration
 {
     public class MailSettings
     {
