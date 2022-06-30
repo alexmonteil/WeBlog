@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using WeBlog.Models;
-using WeBlog.Services;
+using WeBlog.Services.Interfaces;
 
 namespace WeBlog.Areas.Identity.Pages.Account
 {

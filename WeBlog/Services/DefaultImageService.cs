@@ -1,4 +1,6 @@
-﻿namespace WeBlog.Services
+﻿using WeBlog.Services.Interfaces;
+
+namespace WeBlog.Services
 {
     public class DefaultImageService : IImageService
     {

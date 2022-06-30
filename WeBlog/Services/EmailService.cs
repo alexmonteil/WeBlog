@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using MimeKit;
 using WeBlog.Configuration;
+using WeBlog.Services.Interfaces;
 
 namespace WeBlog.Services
 {

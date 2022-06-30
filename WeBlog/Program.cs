@@ -4,6 +4,7 @@ using WeBlog.Configuration;
 using WeBlog.Data;
 using WeBlog.Models;
 using WeBlog.Services;
+using WeBlog.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,6 +35,9 @@ builder.Services.AddScoped<IBlogEmailSender, EmailService>();
 
 // Register ImageService
 builder.Services.AddScoped<IImageService, DefaultImageService>();
+
+// Register SlugService
+builder.Services.AddScoped<ISlugService, DefaultSlugService>();
 
 var app = builder.Build();
 

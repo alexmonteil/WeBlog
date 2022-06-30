@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using WeBlog.Models;
-using WeBlog.Services;
+using WeBlog.Services.Interfaces;
 using WeBlog.ViewModels;
 
 namespace WeBlog.Controllers

@@ -3,16 +3,19 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WeBlog.Data;
 using WeBlog.Models;
+using WeBlog.Services.Interfaces;
 
 namespace WeBlog.Controllers
 {
     public class PostsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ISlugService _slugService;
 
-        public PostsController(ApplicationDbContext context)
+        public PostsController(ApplicationDbContext context, ISlugService slugService)
         {
             _context = context;
+            _slugService = slugService;
         }
 
         // GET: Posts
@@ -54,11 +57,20 @@ namespace WeBlog.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("BlogId,Title,Abstract,Content,ReadyStatus,Image")] Post post)
+        public async Task<IActionResult> Create([Bind("BlogId,Title,Abstract,Content,ReadyStatus,Image")] Post post, List<string> tagValues)
         {
             if (ModelState.IsValid)
             {
-                post.Created = DateTime.Now;
+                post.Created = DateTime.UtcNow;
+                var slug = _slugService.UrlFriendly(post.Title);
+                if (!_slugService.IsUnique(slug))
+                {
+                    ModelState.AddModelError("Title", "The title you provided cannot be used as it is a duplicate.");
+                    ViewData["TagValues"] = string.Join(",", tagValues);
+                    return View(post);
+                }
+
+                post.Slug = slug;
                 _context.Add(post);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -103,7 +115,7 @@ namespace WeBlog.Controllers
             {
                 try
                 {
-                    post.Updated = DateTime.Now;
+                    post.Updated = DateTime.UtcNow;
                     _context.Update(post);
                     await _context.SaveChangesAsync();
                 }

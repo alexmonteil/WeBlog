@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.UI.Services;
 
-namespace WeBlog.Services
+namespace WeBlog.Services.Interfaces
 {
     public interface IBlogEmailSender : IEmailSender
     {

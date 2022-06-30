@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WeBlog.Data;
 using WeBlog.Models;
-using WeBlog.Services;
+using WeBlog.Services.Interfaces;
 
 namespace WeBlog.Controllers
 {

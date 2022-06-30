@@ -1,4 +1,4 @@
-﻿namespace WeBlog.Services
+﻿namespace WeBlog.Services.Interfaces
 {
     public interface IImageService
     {
