@@ -65,6 +65,8 @@
             placeholder: "Post content"
         });
     </script>
+
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
 
 @section Head {
