@@ -11,11 +11,13 @@ namespace WeBlog.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ISlugService _slugService;
+        private readonly IImageService _imageService;
 
-        public PostsController(ApplicationDbContext context, ISlugService slugService)
+        public PostsController(ApplicationDbContext context, ISlugService slugService, IImageService imageService)
         {
             _context = context;
             _slugService = slugService;
+            _imageService = imageService;
         }
 
         // GET: Posts
@@ -61,6 +63,12 @@ namespace WeBlog.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (post.Image != null)
+                {
+                    post.ImageData = await _imageService.EncodeImageAsync(post.Image);
+                    post.ContentType = _imageService.ContentType(post.Image);
+                }
+
                 post.Created = DateTime.UtcNow;
                 var slug = _slugService.UrlFriendly(post.Title);
                 if (!_slugService.IsUnique(slug))
@@ -104,7 +112,7 @@ namespace WeBlog.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,BlogId,Title,Abstract,Content,ReadyStatus,Image")] Post post)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,BlogId,Title,Abstract,Content,ReadyStatus,Image,ImageData,ContentType")] Post post)
         {
             if (id != post.Id)
             {
@@ -113,6 +121,13 @@ namespace WeBlog.Controllers
 
             if (ModelState.IsValid)
             {
+
+                if (post.Image != null)
+                {
+                    post.ImageData = await _imageService.EncodeImageAsync(post.Image);
+                    post.ContentType = _imageService.ContentType(post.Image);
+                }
+
                 try
                 {
                     post.Updated = DateTime.UtcNow;

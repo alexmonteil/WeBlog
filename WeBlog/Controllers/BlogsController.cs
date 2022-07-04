@@ -97,7 +97,7 @@ namespace WeBlog.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description")] Blog blog, IFormFile newImage)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Image,ImageData,ContentType")] Blog blog)
         {
             if (id != blog.Id)
             {
@@ -106,6 +106,12 @@ namespace WeBlog.Controllers
 
             if (ModelState.IsValid)
             {
+                if (blog.Image != null)
+                {
+                    blog.ImageData = await _imageService.EncodeImageAsync(blog.Image);
+                    blog.ContentType = _imageService.ContentType(blog.Image);
+                }
+
                 try
                 {
                     blog.Updated = DateTime.UtcNow;
