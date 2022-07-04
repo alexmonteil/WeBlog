@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using WeBlog.Models;
+using WeBlog.Services.Interfaces;
 
 namespace WeBlog.Areas.Identity.Pages.Account
 {
@@ -17,12 +18,12 @@ namespace WeBlog.Areas.Identity.Pages.Account
     public class RegisterConfirmationModel : PageModel
     {
         private readonly UserManager<BlogUser> _userManager;
-        private readonly IEmailSender _sender;
+        private readonly IBlogEmailSender _emailSender;
 
-        public RegisterConfirmationModel(UserManager<BlogUser> userManager, IEmailSender sender)
+        public RegisterConfirmationModel(UserManager<BlogUser> userManager, IBlogEmailSender emailSender)
         {
             _userManager = userManager;
-            _sender = sender;
+            _emailSender = emailSender;
         }
 
         /// <summary>
