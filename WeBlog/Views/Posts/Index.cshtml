@@ -1,4 +1,6 @@
-﻿@model IEnumerable<WeBlog.Models.Post>
+﻿@using WeBlog.Services.Interfaces
+@model IEnumerable<WeBlog.Models.Post>
+@inject IImageService imageService
 
 @{
     ViewData["Title"] = "Index";
@@ -19,10 +21,7 @@
                 @Html.DisplayNameFor(model => model.Abstract)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Created)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ReadyStatus)
+                @Html.DisplayNameFor(model => model.ImageData)
             </th>
             <th></th>
         </tr>
@@ -37,10 +36,7 @@
                 @Html.DisplayFor(modelItem => item.Abstract)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Created)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ReadyStatus)
+                <img src="@imageService.DecodeImage(item.ImageData, item.ContentType)" />
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
