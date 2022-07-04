@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WeBlog.Data;
@@ -12,12 +13,14 @@ namespace WeBlog.Controllers
         private readonly ApplicationDbContext _context;
         private readonly ISlugService _slugService;
         private readonly IImageService _imageService;
+        private readonly UserManager<BlogUser> _userManager;
 
-        public PostsController(ApplicationDbContext context, ISlugService slugService, IImageService imageService)
+        public PostsController(ApplicationDbContext context, ISlugService slugService, IImageService imageService, UserManager<BlogUser> userManager)
         {
             _context = context;
             _slugService = slugService;
             _imageService = imageService;
+            _userManager = userManager;
         }
 
         // GET: Posts
@@ -70,7 +73,10 @@ namespace WeBlog.Controllers
                 }
 
                 post.Created = DateTime.UtcNow;
+                var authorId = _userManager.GetUserId(User);
+                post.BlogUserId = authorId;
                 var slug = _slugService.UrlFriendly(post.Title);
+
                 if (!_slugService.IsUnique(slug))
                 {
                     ModelState.AddModelError("Title", "The title you provided cannot be used as it is a duplicate.");
@@ -80,6 +86,18 @@ namespace WeBlog.Controllers
 
                 post.Slug = slug;
                 _context.Add(post);
+                await _context.SaveChangesAsync();
+
+                foreach (string tagText in tagValues)
+                {
+                    _context.Add(new Tag()
+                    {
+                        PostId = post.Id,
+                        BlogUserId = authorId,
+                        Text = tagText
+                    });
+                }
+
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
