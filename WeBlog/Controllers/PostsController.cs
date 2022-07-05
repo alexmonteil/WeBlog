@@ -270,7 +270,7 @@ namespace WeBlog.Controllers
             {
                 _context.Posts.Remove(post);
             }
-
+            
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
