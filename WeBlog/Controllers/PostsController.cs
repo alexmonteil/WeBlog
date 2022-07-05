@@ -151,7 +151,7 @@ namespace WeBlog.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,BlogId,Title,Abstract,Content,ReadyStatus,Created,Image,ImageData,ContentType")] Post post, List<string> tagValues)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,BlogId,Title,Abstract,Content,ReadyStatus,Image")] Post post, List<string> tagValues)
         {
             if (id != post.Id)
             {
@@ -161,18 +161,23 @@ namespace WeBlog.Controllers
             if (ModelState.IsValid)
             {
 
-                if (post.Image != null)
-                {
-                    post.ImageData = await _imageService.EncodeImageAsync(post.Image);
-                    post.ContentType = _imageService.ContentType(post.Image);
-                }
-
                 try
                 {
+                    var newPost = await _context.Posts.Include(p => p.Tags).FirstOrDefaultAsync(p => p.Id == id);
+                    newPost.Updated = DateTime.UtcNow;
+                    newPost.Title = post.Title;
+                    newPost.Abstract = post.Abstract;
+                    newPost.Content = post.Content;
+                    newPost.ReadyStatus = post.ReadyStatus;
+
+                    if (post.Image is not null)
+                    {
+                        newPost.ImageData = await _imageService.EncodeImageAsync(post.Image);
+                        newPost.ContentType = _imageService.ContentType(post.Image);
+                    }
 
                     // Remove all tags previously associated with this post
-
-                    _context.Tags.RemoveRange(post.Tags);
+                    _context.Tags.RemoveRange(newPost.Tags);
 
                     // Add the new tags from the edit form
                     foreach(var tagText in tagValues)
@@ -180,13 +185,11 @@ namespace WeBlog.Controllers
                         _context.Add(new Tag()
                         {
                             PostId = post.Id,
-                            BlogUserId = post.BlogUserId,
+                            BlogUserId = newPost.BlogUserId,
                             Text = tagText
                         });
                     }
 
-                    post.Updated = DateTime.UtcNow;
-                    _context.Update(post);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
@@ -202,6 +205,7 @@ namespace WeBlog.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
             ViewData["BlogId"] = new SelectList(_context.Blogs, "Id", "Description", post.BlogId);
 
             return View(post);

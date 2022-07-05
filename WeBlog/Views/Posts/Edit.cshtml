@@ -75,9 +75,6 @@
                 <select asp-for="ReadyStatus" asp-items="@Html.GetEnumSelectList<ReadyStatus>()" class="form-control"></select>
                 <span asp-validation-for="ReadyStatus" class="text-danger"></span>
             </div>
-            <input type="hidden" asp-for="Created" />
-            <input type="hidden" asp-for="ImageData" />
-            <input type="hidden" asp-for="ContentType" />
             <div class="form-group mt-2">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
