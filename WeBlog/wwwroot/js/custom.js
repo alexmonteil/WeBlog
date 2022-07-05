@@ -33,22 +33,6 @@ function DeleteTag() {
     }
 }
 
-// Takes a selector for a select Tag and selects all options
-function SelectAllOptions(selector) {
-
-    console.log("SelectAllOptions running");
-
-    let list = document.querySelector(selector);
-    let numberOfOptions = list.options.length;
-
-    for (let i = 0; i < numberOfOptions; i++) {
-        list.options[i].selected = true;
-    }
-
-    console.log(list.value);
-}
-
-document.querySelector("form").addEventListener('submit', () => {
-
-    return SelectAllOptions("#TagList");
+$("form").on("submit", function () {
+    $("#TagList option").prop("selected", "selected");
 });
