@@ -48,12 +48,12 @@
                         <div class="row">
                             <div class="col">
                                 <div class="d-grid gap-2">
-                                    <button name="Add" type="button" class="btn btn-dark btn-sm">Add</button>
+                                    <button onclick="AddTag()" name="Add" type="button" class="btn btn-dark btn-sm">Add</button>
                                 </div>
                             </div>
                             <div class="col">
                                 <div class="d-grid gap-2">
-                                    <button name="Delete" type="button" class="btn btn-dark btn-sm">Delete</button>
+                                    <button onclick="DeleteTag()" name="Delete" type="button" class="btn btn-dark btn-sm">Delete</button>
                                 </div>
                             </div>
                         </div>
@@ -86,18 +86,20 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
-<!--JQuery JS for summernote-->
-<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-<!-- Summernote JS -->
-<script type="text/javascript" src="~/js/summernote-lite.min.js"></script>
+
 @section Scripts {
 
+    <!--JQuery JS for summernote-->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <!-- Summernote JS -->
+    <script type="text/javascript" src="~/js/summernote-lite.min.js"></script>
     <script>
         //Default font size but not for placeholder...
         $('#Content').summernote({
             placeholder: "Post content"
         });
     </script>
+    <script src="~/js/custom.js" type="text/javascript"></script>
 
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

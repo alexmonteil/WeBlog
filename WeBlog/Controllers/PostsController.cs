@@ -31,9 +31,29 @@ namespace WeBlog.Controllers
         }
 
         // GET: Posts/Details/5
-        public async Task<IActionResult> Details(int? id)
+        //public async Task<IActionResult> Details(int? id)
+        //{
+        //    if (id == null || _context.Posts == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    var post = await _context.Posts
+        //        .Include(p => p.Blog)
+        //        .Include(p => p.BlogUser)
+        //        .FirstOrDefaultAsync(m => m.Id == id);
+        //    if (post == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    return View(post);
+        //}
+
+
+        public async Task<IActionResult> Details(string slug)
         {
-            if (id == null || _context.Posts == null)
+            if (string.IsNullOrEmpty(slug))
             {
                 return NotFound();
             }
@@ -41,7 +61,8 @@ namespace WeBlog.Controllers
             var post = await _context.Posts
                 .Include(p => p.Blog)
                 .Include(p => p.BlogUser)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .Include(p => p.Tags)
+                .FirstOrDefaultAsync(m => m.Slug == slug);
             if (post == null)
             {
                 return NotFound();
@@ -101,9 +122,9 @@ namespace WeBlog.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            
+
             ViewData["BlogId"] = new SelectList(_context.Blogs, "Id", "Description", post.BlogId);
-           
+
             return View(post);
         }
 
@@ -121,7 +142,7 @@ namespace WeBlog.Controllers
                 return NotFound();
             }
             ViewData["BlogId"] = new SelectList(_context.Blogs, "Id", "Name", post.BlogId);
-           
+
             return View(post);
         }
 
@@ -166,7 +187,7 @@ namespace WeBlog.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["BlogId"] = new SelectList(_context.Blogs, "Id", "Description", post.BlogId);
-            
+
             return View(post);
         }
 
@@ -204,14 +225,14 @@ namespace WeBlog.Controllers
             {
                 _context.Posts.Remove(post);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool PostExists(int id)
         {
-          return (_context.Posts?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Posts?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
