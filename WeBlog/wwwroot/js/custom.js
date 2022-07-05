@@ -19,7 +19,8 @@ function AddTag() {
         // Alert error
         swalWithRedButton.fire({
             html: `<span class='font-weight-bolder'>${searchResult.toUpperCase()}</span>`,
-            icon: 'error'
+            icon: 'error',
+            confirmButtonText: 'Dismiss'
         });
 
     } else {
@@ -37,14 +38,26 @@ function AddTag() {
 function DeleteTag() {
 
     let tagCount = 1;
+    let tagList = document.getElementById("TagList");
+    if (!tagList) {
+        return false;
+    }
+
+    if (tagList.selectedIndex === -1) {
+        swalWithRedButton.fire({
+            html: "<span class='font-weight-bolder'>CHOOSE A TAG BEFORE DELETING</span>",
+            icon: 'error',
+            confirmButtonText: 'Dismiss'
+        });
+
+        return true;
+    }
+
     while (tagCount > 0) {
 
-        let tagList = document.getElementById("TagList");
-        let selectedIndex = tagList.selectedIndex;
+        if (tagList.selectedIndex >= 0) {
 
-        if (selectedIndex >= 0) {
-
-            tagList.options[selectedIndex] = null;
+            tagList.options[tagList.selectedIndex] = null;
             --tagCount;
 
         } else {
