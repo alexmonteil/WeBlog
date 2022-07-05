@@ -30,27 +30,6 @@ namespace WeBlog.Controllers
             return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: Posts/Details/5
-        //public async Task<IActionResult> Details(int? id)
-        //{
-        //    if (id == null || _context.Posts == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    var post = await _context.Posts
-        //        .Include(p => p.Blog)
-        //        .Include(p => p.BlogUser)
-        //        .FirstOrDefaultAsync(m => m.Id == id);
-        //    if (post == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return View(post);
-        //}
-
-
         public async Task<IActionResult> Details(string slug)
         {
             if (string.IsNullOrEmpty(slug))
