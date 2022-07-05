@@ -136,13 +136,13 @@ namespace WeBlog.Controllers
                 return NotFound();
             }
 
-            var post = await _context.Posts.FindAsync(id);
+            var post = await _context.Posts.Include(p => p.Tags).FirstOrDefaultAsync(p => p.Id == id);
             if (post == null)
             {
                 return NotFound();
             }
             ViewData["BlogId"] = new SelectList(_context.Blogs, "Id", "Name", post.BlogId);
-
+            ViewData["TagValues"] = string.Join(",", post.Tags.Select(t => t.Text));
             return View(post);
         }
 
@@ -151,7 +151,7 @@ namespace WeBlog.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,BlogId,Title,Abstract,Content,ReadyStatus,Created,Image,ImageData,ContentType")] Post post)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,BlogId,Title,Abstract,Content,ReadyStatus,Created,Image,ImageData,ContentType")] Post post, List<string> tagValues)
         {
             if (id != post.Id)
             {
@@ -169,6 +169,22 @@ namespace WeBlog.Controllers
 
                 try
                 {
+
+                    // Remove all tags previously associated with this post
+
+                    _context.Tags.RemoveRange(post.Tags);
+
+                    // Add the new tags from the edit form
+                    foreach(var tagText in tagValues)
+                    {
+                        _context.Add(new Tag()
+                        {
+                            PostId = post.Id,
+                            BlogUserId = post.BlogUserId,
+                            Text = tagText
+                        });
+                    }
+
                     post.Updated = DateTime.UtcNow;
                     _context.Update(post);
                     await _context.SaveChangesAsync();
