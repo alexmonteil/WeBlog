@@ -76,10 +76,25 @@ namespace WeBlog.Controllers
                 var authorId = _userManager.GetUserId(User);
                 post.BlogUserId = authorId;
                 var slug = _slugService.UrlFriendly(post.Title);
+                bool validationError = false;
 
+                // Detect null or empty slug
+                if (string.IsNullOrEmpty(slug))
+                {
+                    ModelState.AddModelError("", "The title you provided cannot be used as it results in an empty slug");
+                    validationError = true;
+                }
+
+                // Detect duplicate slug
                 if (!_slugService.IsUnique(slug))
                 {
-                    ModelState.AddModelError("Title", "The title you provided cannot be used as it is a duplicate.");
+                    ModelState.AddModelError("Title", "The title you provided cannot be used as it results in a duplicate slug");
+                    validationError = true;
+                }
+
+                // if validation errors exist, return necessary data to the view
+                if (validationError)
+                {
                     ViewData["TagValues"] = string.Join(",", tagValues);
                     return View(post);
                 }
@@ -148,6 +163,37 @@ namespace WeBlog.Controllers
                     newPost.Abstract = post.Abstract;
                     newPost.Content = post.Content;
                     newPost.ReadyStatus = post.ReadyStatus;
+
+                    var newSlug = _slugService.UrlFriendly(post.Title);
+                    bool validationError = false;
+
+                    // Check for slug change
+                    if (newSlug != newPost.Slug)
+                    {
+                        // Detect null or empty slug
+                        if (string.IsNullOrEmpty(newSlug))
+                        {
+                            ModelState.AddModelError("", "The title you provided cannot be used as it results in an empty slug");
+                            validationError = true;
+                        }
+
+                        // Detect duplicate slug
+                        if (!_slugService.IsUnique(newSlug))
+                        {
+                            ModelState.AddModelError("Title", "The title you provided cannot be used as it results in a duplicate slug");
+                            validationError = true;
+                        }
+
+                        // if validation errors exist, return necessary data to the view
+                        if (validationError)
+                        {
+                            ViewData["TagValues"] = string.Join(",", tagValues);
+                            return View(post);
+                        }
+
+                        newPost.Title = post.Title;
+                        newPost.Slug = newSlug;
+                    }
 
                     if (post.Image is not null)
                     {
