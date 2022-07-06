@@ -94,7 +94,7 @@ function SearchForErrors(str) {
 
     let tagElements = document.getElementById("TagList");
 
-    if (tagsElements) {
+    if (tagElements) {
 
         let options = tagElements.options;
         for (let i = 0; i < options.length; i++) {
