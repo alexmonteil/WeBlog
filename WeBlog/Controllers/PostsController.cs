@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using WeBlog.Data;
 using WeBlog.Models;
 using WeBlog.Services.Interfaces;
+using X.PagedList;
 
 namespace WeBlog.Controllers
 {
@@ -31,16 +32,21 @@ namespace WeBlog.Controllers
         }
 
         // BlogPostIndex
-        public async Task<IActionResult> BlogPostIndex(int? id)
+        public async Task<IActionResult> BlogPostIndex(int? id, int? page)
         {
             if (id is null)
             {
                 return NotFound();
             }
 
-            var posts = _context.Posts.Where(p => p.BlogId == id).ToList();
+            var pageNumber = page ?? 1;
+            var pageSize = 5;
+            var posts =  await _context.Posts.Where(p => p.BlogId == id && p.ReadyStatus == Enums.ReadyStatus.ProductionReady)
+                        .OrderByDescending(p => p.Created)
+                        .ToPagedListAsync(pageNumber, pageSize);
 
-            return View("Index", posts);
+
+            return View(posts);
         }
 
         // Post Details
