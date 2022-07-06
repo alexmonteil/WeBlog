@@ -30,6 +30,20 @@ namespace WeBlog.Controllers
             return View(await applicationDbContext.ToListAsync());
         }
 
+        // BlogPostIndex
+        public async Task<IActionResult> BlogPostIndex(int? id)
+        {
+            if (id is null)
+            {
+                return NotFound();
+            }
+
+            var posts = _context.Posts.Where(p => p.BlogId == id).ToList();
+
+            return View("Index", posts);
+        }
+
+        // Post Details
         public async Task<IActionResult> Details(string slug)
         {
             if (string.IsNullOrEmpty(slug))
