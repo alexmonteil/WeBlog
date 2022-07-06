@@ -49,6 +49,34 @@ namespace WeBlog.Controllers
             return View(posts);
         }
 
+        // SearchIndex
+        public async Task<IActionResult> SearchIndex(int? page, string searchTerm)
+        {
+            ViewData["SearchTerm"] = searchTerm;
+            var pageNumber = page ?? 1;
+            var pageSize = 5;
+            var posts = _context.Posts.Where(p => p.ReadyStatus == Enums.ReadyStatus.ProductionReady).AsQueryable();
+
+            if (searchTerm is not null)
+            {
+                searchTerm = searchTerm.ToLower();
+                posts = posts.Where(
+                    p => p.Title.ToLower().Contains(searchTerm) ||
+                    p.Abstract.ToLower().Contains(searchTerm) ||
+                    p.Content.ToLower().Contains(searchTerm) ||
+                    p.Comments.Any(
+                        c => c.Body.ToLower().Contains(searchTerm) ||
+                        c.ModeratedBody.ToLower().Contains(searchTerm) ||
+                        c.BlogUser.FirstName.ToLower().Contains(searchTerm) ||
+                        c.BlogUser.LastName.ToLower().Contains(searchTerm) ||
+                        c.BlogUser.Email.ToLower().Contains(searchTerm)));
+            }
+
+            posts = posts.OrderByDescending(p => p.Created);
+            return View(await posts.ToPagedListAsync(pageNumber, pageSize));
+
+        }
+
         // Post Details
         public async Task<IActionResult> Details(string slug)
         {
