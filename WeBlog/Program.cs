@@ -24,8 +24,11 @@ builder.Services.AddIdentity<BlogUser, IdentityRole>(options => options.SignIn.R
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
-// Register DataService class
+// Register DataService 
 builder.Services.AddScoped<DataService>();
+
+// Register BlogSearchService
+builder.Services.AddScoped<BlogSearchService>();
 
 // Register pre-configured instance of MailSettings class
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings"));
