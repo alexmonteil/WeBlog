@@ -76,7 +76,7 @@
                     <p>@comment.Body</p>
                     @if(comment.Moderated is null && comment.Deleted is null && comment.BlogUserId == userManager.GetUserId(User))
                     {
-                        <button data-bs-toggle="modal" data-bs-target="#editModal" class="btn btn-sm btn-dark float-end font-weight-bold">Edit</button>
+                        <button data-bs-toggle="modal" data-bs-target="#editModal_@comment.Id" class="btn btn-sm btn-dark float-end font-weight-bold">Edit</button>
                     }
                 </div>
             </div>
@@ -86,7 +86,7 @@
 
 
     @* Modal *@
-    <div class="modal" id="editModal">
+    <div class="modal" id="editModal_@comment.Id">
         <div class="modal-dialog">
             <div class="modal-content">
                 <!-- Modal Header -->
