@@ -73,32 +73,70 @@
                 <img class="me-3 mt-3 rounded-circle" style="width: 60px;" src="@imageService.DecodeImage(comment.BlogUser.ImageData, comment.BlogUser.ContentType)" />
                 <div class="media-body">
                     <h4>@comment.BlogUser.FullName</h4>
-                    <small>
-                        <i>
-                            @if(comment.Moderated is not null)
-                            {
-                                <span class="small">
-                                    <span class="font-weight-bolder">
-                                        Moderated <span class="text-danger font-italic">@comment.ModerationType.ToString()</span>
-                                    </span>
-                                    : @comment.Moderated?.ToString("MMM dd, yyyy")
-                                </span>
-                            }
-                            else
-                            {
-                                <span class="small font-italic">Posted on @comment.Created.ToString("MMM dd, yyyy")</span>   
-                            }
-                        </i>
-                    </small>
+                    
+                    @* SECTION 1 : Status and dates *@
+                        
+                    @if(comment.Deleted is not null)
+                    {
+                        <span class="small font-italic">Deleted on @comment.Deleted?.ToString("MMM dd, yyyy")</span>
+                    }
+                    else if(comment.Moderated is not null)
+                    {
+                        <span class="small">
+                            <span class="font-weight-bolder">
+                                Moderated <span class="text-danger font-italic">@comment.ModerationType.ToString()</span>
+                            </span>
+                            : @comment.Moderated?.ToString("MMM dd, yyyy")
+                        </span>
+                    }
+                    else if (comment.Updated is not null)
+                    {
+                        <span class="small font-italic">Updated on @comment.Updated?.ToString("MMM dd, yyyy")</span>
+                    }
+                    else
+                    {
+                        <span class="small font-italic">Posted on @comment.Created.ToString("MMM dd, yyyy")</span>   
+                    }
+                    
+                    <br/>
 
+                    @* SECTION 2 : Render pre text *@
 
+                    @if (comment.Deleted is not null)
+                    {
+                        <span class="small font-italic">The comment posted on @comment.Created.ToString("MMM dd, yyyy") by @comment.BlogUser.FullName was deleted by the Moderator...</span>
+                    }
+                    else if (comment.Moderated is not null)
+                    {
+                        <span class="small font-italic">The comment posted on @comment.Created.ToString("MMM dd, yyyy") by @comment.BlogUser.FullName has been Moderated...</span>
+                    }
 
-                    <p>@comment.Body</p>
+                    <hr />
+
+                    @* SECTION 3 : Render main body *@
+
+                    @if (string.IsNullOrEmpty(comment.Body))
+                    {
+                        <span class="small font-italic">Comment not available...</span>
+                    }
+                    else if (comment.Moderated is not null)
+                    {
+                        @comment.ModeratedBody
+                    }
+                    else if (comment.Deleted is null)
+                    {
+                        @comment.Body
+                    }
+
+                    @* SECTION 4 : Can we render the edit button ? *@
+
                     @if(comment.Moderated is null && comment.Deleted is null && comment.BlogUserId == userManager.GetUserId(User))
                     {
                         <button data-bs-toggle="modal" data-bs-target="#editModal_@comment.Id" class="btn btn-sm btn-dark float-end font-weight-bold">Edit</button>
                     }
                     
+                    @* SECTION 5 : Can we render the moderate and delete buttons ? *@
+
                     @if(User.IsInRole(BlogRole.Moderator.ToString()) && comment.Deleted is null)
                     {
                         <div class="row">
