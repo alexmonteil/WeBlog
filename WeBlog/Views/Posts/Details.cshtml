@@ -23,7 +23,7 @@
 
 <article>
     <div class="row">
-        <div class="col text-center font-weight-bold h3">
+        <div class="col text-center fw-bold h3">
             Custom Post Tags
         </div>
         <div class="row">
@@ -45,7 +45,7 @@
         <form asp-controller="Comments" asp-action="Create" method="POST">
             @Html.Hidden("PostId", Model.Id)
             <div class="form-group">
-                <label class="h2 control-label font-weight-bold">Add Comment</label>
+                <label class="h2 control-label fw-bold">Add Comment</label>
                 <textarea name="body" class="form-control" rows="10" required></textarea>
             </div>
             <button type="submit" class="btn btn-dark btn-sm">Submit</button>
@@ -72,30 +72,30 @@
             <div class="media media-border p-0 bg-light">
                 <img class="me-3 mt-3 rounded-circle" style="width: 60px;" src="@imageService.DecodeImage(comment.BlogUser.ImageData, comment.BlogUser.ContentType)" />
                 <div class="media-body">
-                    <h4>@comment.BlogUser.FullName</h4>
+                    <h4>@comment.BlogUser.DisplayName</h4>
                     
                     @* SECTION 1 : Status and dates *@
                         
                     @if(comment.Deleted is not null)
                     {
-                        <span class="small font-italic">Deleted on @comment.Deleted?.ToString("MMM dd, yyyy")</span>
+                        <span class="small fst-italic">Deleted on @comment.Deleted?.ToString("MMM dd, yyyy")</span>
                     }
                     else if(comment.Moderated is not null)
                     {
                         <span class="small">
-                            <span class="font-weight-bolder">
-                                Moderated <span class="text-danger font-italic">@comment.ModerationType.ToString()</span>
+                            <span class="fw-bolder">
+                                Moderated for reason: <span class="text-danger fst-italic">@comment.ModerationType.ToString()</span>
                             </span>
-                            : @comment.Moderated?.ToString("MMM dd, yyyy")
+                            on @comment.Moderated?.ToString("MMM dd, yyyy")
                         </span>
                     }
                     else if (comment.Updated is not null)
                     {
-                        <span class="small font-italic">Updated on @comment.Updated?.ToString("MMM dd, yyyy")</span>
+                        <span class="small fst-italic">Updated on @comment.Updated?.ToString("MMM dd, yyyy")</span>
                     }
                     else
                     {
-                        <span class="small font-italic">Posted on @comment.Created.ToString("MMM dd, yyyy")</span>   
+                        <span class="small fst-italic">Posted on @comment.Created.ToString("MMM dd, yyyy")</span>   
                     }
                     
                     <br/>
@@ -104,11 +104,11 @@
 
                     @if (comment.Deleted is not null)
                     {
-                        <span class="small font-italic">The comment posted on @comment.Created.ToString("MMM dd, yyyy") by @comment.BlogUser.FullName was deleted by the Moderator...</span>
+                        <span class="small fst-italic">The comment posted on @comment.Created.ToString("MMM dd, yyyy") by @comment.BlogUser.DisplayName was deleted by the Moderator...</span>
                     }
                     else if (comment.Moderated is not null)
                     {
-                        <span class="small font-italic">The comment posted on @comment.Created.ToString("MMM dd, yyyy") by @comment.BlogUser.FullName has been Moderated...</span>
+                        <span class="small fst-italic">The comment posted on @comment.Created.ToString("MMM dd, yyyy") by @comment.BlogUser.DisplayName has been Moderated...</span>
                     }
 
                     <hr />
@@ -117,7 +117,7 @@
 
                     @if (string.IsNullOrEmpty(comment.Body))
                     {
-                        <span class="small font-italic">Comment not available...</span>
+                        <span class="small fst-italic">Comment not available...</span>
                     }
                     else if (comment.Moderated is not null)
                     {
@@ -132,7 +132,7 @@
 
                     @if(comment.Moderated is null && comment.Deleted is null && comment.BlogUserId == userManager.GetUserId(User))
                     {
-                        <button data-bs-toggle="modal" data-bs-target="#editModal_@comment.Id" class="btn btn-sm btn-dark float-end font-weight-bold">Edit</button>
+                        <button data-bs-toggle="modal" data-bs-target="#editModal_@comment.Id" class="btn btn-sm btn-dark float-end fw-bold">Edit</button>
                     }
                     
                     @* SECTION 5 : Can we render the moderate and delete buttons ? *@
@@ -142,7 +142,7 @@
                         <div class="row">
                             <div class="col-2">
                                 <div class="d-grid gap-2">
-                                    <button class="btn btn-sm btn-dark font-weight-bold" data-bs-toggle="modal" data-bs-target="#moderateModal_@comment.Id">Moderate</button>
+                                    <button class="btn btn-sm btn-dark fw-bold" data-bs-toggle="modal" data-bs-target="#moderateModal_@comment.Id">Moderate</button>
                                 </div>
                             </div>
                             <div class="col-2">
@@ -150,7 +150,7 @@
                                     @Html.Hidden("Id", comment.Id)
                                     @Html.Hidden("Slug", Model.Slug)
                                     <div class="d-grid gap-2">
-                                        <button class="btn btn-sm btn-dark font-weight-bold">Delete</button>
+                                        <button class="btn btn-sm btn-dark fw-bold">Delete</button>
                                     </div>
                                 </form>
                             </div>
@@ -178,13 +178,13 @@
                         <div class="form-group">
                             <textarea name="Body" class="form-control" required>@comment.Body</textarea>
                         </div>
-                        <button class="btn btn-sm btn-dark border-success font-weight-bold mt-2" type="submit">Submit</button>
+                        <button class="btn btn-sm btn-dark border-success fw-bold mt-2" type="submit">Submit</button>
                     </form>
                 </div>
 
                 <!-- Modal Footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-sm btn-dark font-weight-bold" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-sm btn-dark fw-bold" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -218,10 +218,10 @@
                         <div class="form-group">
                             <div class="row">
                                 <div class="col">
-                                    <button class="btn btn-sm btn-dark border-success font-weight-bold" type="submit">Submit</button>
+                                    <button class="btn btn-sm btn-dark border-success fw-bold" type="submit">Submit</button>
                                 </div>
                                 <div class="col">
-                                    <button class="btn btn-sm btn-dark font-weight-bold" type="button" data-bs-dismiss="modal">Close</button>
+                                    <button class="btn btn-sm btn-dark fw-bold" type="button" data-bs-dismiss="modal">Close</button>
                                 </div>
                             </div>
                         </div>
@@ -230,7 +230,7 @@
 
                 <!-- Modal Footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-sm btn-dark font-weight-bold" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-sm btn-dark fw-bold" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>

@@ -18,7 +18,7 @@ function AddTag() {
 
         // Alert error
         swalWithRedButton.fire({
-            html: `<span class='font-weight-bolder'>${searchResult.toUpperCase()}</span>`,
+            html: `<span class='fw-bolder'>${searchResult.toUpperCase()}</span>`,
             icon: 'error',
             confirmButtonText: 'Dismiss'
         });
@@ -45,7 +45,7 @@ function DeleteTag() {
 
     if (tagList.selectedIndex === -1) {
         swalWithRedButton.fire({
-            html: "<span class='font-weight-bolder'>CHOOSE A TAG BEFORE DELETING</span>",
+            html: "<span class='fw-bolder'>CHOOSE A TAG BEFORE DELETING</span>",
             icon: 'error',
             confirmButtonText: 'Dismiss'
         });
