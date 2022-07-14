@@ -50,17 +50,17 @@
 
                         @if (User.IsInRole("Administrator"))
                         {
-                            <a class="badge badge-success text-decoration-none rounded"
+                            <a class="badge bg-primary text-decoration-none"
                                asp-action="Create"
                                asp-controller="Posts"
                                asp-route-blogId="@blog.Id">Create Post</a>
 
-                            <a class="badge badge-success text-decoration-none rounded"
+                            <a class="badge bg-success text-decoration-none"
                                asp-action="Edit"
                                asp-controller="Blogs"
                                asp-route-id="@blog.Id">Edit Blog</a>
 
-                            <a class="badge badge-danger text-decoration-none rounded"
+                            <a class="badge bg-danger text-decoration-none"
                                asp-action="Delete"
                                asp-controller="Blogs"
                                asp-route-id="@blog.Id">Delete Blog</a>
@@ -88,22 +88,4 @@
             })
         </div>
     </div>
-}
-
-
-@section Scripts {
-    <script>
-        const swalMsg = '@TempData["SweetAlert"]';
-        if (swalMsg !== "") {
-            Swal.fire({
-                icon: 'success',
-                title: swalMsg,
-                timer: 2500
-            });
-        }
-
-        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
-
-    </script>
 }
