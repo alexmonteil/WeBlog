@@ -44,6 +44,7 @@
     {
         <form asp-controller="Comments" asp-action="Create" method="POST">
             @Html.Hidden("PostId", Model.Id)
+            @Html.Hidden("Slug", Model.Slug)
             <div class="form-group">
                 <label class="h2 control-label fw-bold">Add Comment</label>
                 <textarea name="body" class="form-control" rows="10" required></textarea>

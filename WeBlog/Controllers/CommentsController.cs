@@ -46,7 +46,7 @@ namespace WeBlog.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("PostId,Body")] Comment comment)
+        public async Task<IActionResult> Create(string slug, [Bind("PostId,Body")] Comment comment)
         {
             if (ModelState.IsValid)
             {
@@ -63,7 +63,7 @@ namespace WeBlog.Controllers
                     return NotFound();
                 }
 
-                return RedirectToAction("Details", "Posts", new { Slug = comment.Post.Slug }, "commentSection");
+                return RedirectToAction("Details", "Posts", new { slug }, "commentSection");
             }
             
             return View(comment);
@@ -188,7 +188,7 @@ namespace WeBlog.Controllers
         // POST: Comments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id, string slug)
         {
             if (_context.Comments == null)
             {
@@ -201,7 +201,7 @@ namespace WeBlog.Controllers
             }
             
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Details", "Posts", new { slug }, "commentSection");
         }
 
         private bool CommentExists(int id)
