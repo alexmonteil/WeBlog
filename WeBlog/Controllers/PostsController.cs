@@ -44,7 +44,7 @@ namespace WeBlog.Controllers
 
             var pageNumber = page ?? 1;
             var pageSize = 5;
-            var posts =  await _context.Posts.Where(p => p.BlogId == id && p.ReadyStatus == Enums.ReadyStatus.ProductionReady)
+            var posts =  await _context.Posts.Include(p => p.BlogUser).Where(p => p.BlogId == id && p.ReadyStatus == Enums.ReadyStatus.ProductionReady)
                         .OrderByDescending(p => p.Created)
                         .ToPagedListAsync(pageNumber, pageSize);
 
