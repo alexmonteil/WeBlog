@@ -121,11 +121,11 @@
                     }
                     else if (comment.Moderated is not null)
                     {
-                        @comment.ModeratedBody
+                        <p>@comment.ModeratedBody</p>
                     }
                     else if (comment.Deleted is null)
                     {
-                        @comment.Body
+                        <p>@comment.Body</p>
                     }
 
                     @* SECTION 4 : Can we render the edit button ? *@
@@ -141,13 +141,17 @@
                     {
                         <div class="row">
                             <div class="col-2">
-                                <button class="btn btn-sm btn-dark font-weight-bold" data-bs-toggle="modal" data-bs-target="#moderateModal_@comment.Id">Moderate</button>
+                                <div class="d-grid gap-2">
+                                    <button class="btn btn-sm btn-dark font-weight-bold" data-bs-toggle="modal" data-bs-target="#moderateModal_@comment.Id">Moderate</button>
+                                </div>
                             </div>
                             <div class="col-2">
                                 <form asp-controller="Comments" asp-action="Delete">
                                     @Html.Hidden("Id", comment.Id)
                                     @Html.Hidden("Slug", Model.Slug)
-                                    <button class="btn btn-sm btn-dark font-weight-bold">Delete</button>
+                                    <div class="d-grid gap-2">
+                                        <button class="btn btn-sm btn-dark font-weight-bold">Delete</button>
+                                    </div>
                                 </form>
                             </div>
                         </div>
@@ -205,7 +209,7 @@
                         </div>
                         <div class="form-group">
                             <label class="control-label">Moderated Comment</label>
-                            <textarea name="Body" class="form-control" required>@comment.ModeratedBody</textarea>
+                            <textarea name="ModeratedBody" class="form-control" required>@comment.ModeratedBody</textarea>
                         </div>
                         <div class="form-group">
                             <label class="control-label">Reason for moderation</label>
