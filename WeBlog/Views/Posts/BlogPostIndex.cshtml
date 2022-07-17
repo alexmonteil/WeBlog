@@ -15,7 +15,7 @@
         <p>
             <a id="adminPills" class="btn btn-outline-primary text-decoration-none" 
                asp-action="Create" 
-               asp-route-blogid="@Model.FirstOrDefault()?.BlogId"><i class="fas fa-pencil-alt"></i> New Post</a>
+               asp-route-blogid="@Model.FirstOrDefault()?.BlogId"><i class="fas fa-pencil-alt"></i>New Post</a>
         </p>
     </div>
 }
@@ -56,7 +56,7 @@
             <div class="row">
                 <div class="col-12 col-md-4">
                     <img id="postImage" class="card-img-top img-fluid" src="@imageService.DecodeImage(post.ImageData, post.ContentType)" />
-                    <a class="btn btn-dark w-100 btn-sm" asp-controller="Posts" asp-action="Details" asp-route-slug="@post.Slug">Read Full Post</a>
+                    <a class="btn btn-dark w-100" asp-controller="Posts" asp-action="Details" asp-route-slug="@post.Slug">Read Full Post</a>
                 </div>
                 <div class="col col-md-8">
                     <a asp-controller="Posts" asp-action="Details" asp-route-slug="@post.Slug">

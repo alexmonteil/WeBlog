@@ -138,7 +138,7 @@
                     
                     @* SECTION 5 : Can we render the moderate and delete buttons ? *@
 
-                    @if(User.IsInRole(BlogRole.Moderator.ToString()) && comment.Deleted is null)
+                    @if((User.IsInRole(BlogRole.Moderator.ToString()) || User.IsInRole(BlogRole.Administrator.ToString())) && comment.Deleted is null)
                     {
                         <div class="row">
                             <div class="col-2">
