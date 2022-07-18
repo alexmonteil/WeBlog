@@ -9,6 +9,17 @@
 }
 
 
+<div class="container px-4 px-lg-5">
+    <div class="row gx-4 gx-lg-5">
+        <div class="col">
+            <a id="adminPills" class="badge bg-dark text-decoration-none"
+                asp-action="BlogPostIndex"
+                asp-controller="Posts"
+                asp-route-id="@Model.BlogId">Return to Post List</a>
+        </div>
+    </div>
+</div>
+
 @if (User.IsInRole("Administrator"))
 {
     <div class="container px-4 px-lg-5">
@@ -32,14 +43,6 @@
 <!-- Post Content-->
 <article class="mb-4">
     <div class="container px-4 px-lg-5">
-        <div class="row gx-4 gx-lg-5">
-            <div class="col-12 col-md-4">
-                <a id="adminPills" class="badge bg-dark text-decoration-none"
-                    asp-action="BlogPostIndex"
-                    asp-controller="Posts"
-                    asp-route-id="@Model.BlogId">Return to Post List</a>
-            </div>
-        </div>
         <div class="row gx-4 gx-lg-5 justify-content-center text-center">
             <div class="col-md-10 col-lg-8 col-xl-7">
                 @Html.Raw(Model.Content)
@@ -94,12 +97,12 @@
                         <label class="h2 control-label fw-bold">Add Comment</label>
                         <textarea name="body" class="form-control" rows="10" required></textarea>
                     </div>
-                    <button type="submit" class="btn btn-dark btn-sm">Submit</button>
+                    <button type="submit" class="btn btn-dark btn-sm w-100">Add Comment</button>
                 </form>
             } 
             else
             {
-               <a class="btn btn-sm btn-dark" asp-area="Identity" asp-page="/Account/Login" asp-route-ReturnUrl="/Posts/Details?slug=@Model.Slug">
+               <a class="btn btn-sm btn-dark w-100" asp-area="Identity" asp-page="/Account/Login" asp-route-ReturnUrl="/Posts/Details?slug=@Model.Slug">
                     Login to add comments    
                </a> 
             }
@@ -111,11 +114,11 @@
     {
         <div class="row mt-2 gx-4 gx-lg-5">
             <div class="col">
-                <div class="media media-border p-0 bg-light">
-                    <img class="me-3 mt-3 rounded-circle" style="width: 60px;" src="@imageService.DecodeImage(comment.BlogUser.ImageData, comment.BlogUser.ContentType)" />
+                <div class="media media-border p-2 mb-3 bg-light shadow-sm">
+                    <img class="align-self-start me-3 rounded-circle img-fluid" style="width: 60px;" src="@imageService.DecodeImage(comment.BlogUser.ImageData, comment.BlogUser.ContentType)" />
                     <div class="media-body">
-                        <h4>@comment.BlogUser.DisplayName</h4>
-                    
+                        <h6 class="mt-2 fw-bold">@comment.BlogUser.DisplayName</h6>
+
                         @* SECTION 1 : Status and dates *@
                         
                         @if(comment.Deleted is not null)
@@ -174,29 +177,33 @@
 
                         @if(comment.Moderated is null && comment.Deleted is null && comment.BlogUserId == userManager.GetUserId(User))
                         {
-                            <button data-bs-toggle="modal" data-bs-target="#editModal_@comment.Id" class="btn btn-sm btn-dark float-end fw-bold">Edit</button>
+                            <div>
+                                <button id="adminPills" data-bs-toggle="modal" data-bs-target="#editModal_@comment.Id" class="badge bg-success float-end fw-bold border-0">Edit</button>
+                            </div>
                         }
                     
                         @* SECTION 5 : Can we render the moderate and delete buttons ? *@
 
                         @if((User.IsInRole(BlogRole.Moderator.ToString()) || User.IsInRole(BlogRole.Administrator.ToString())) && comment.Deleted is null)
                         {
+                           
                             <div class="row g-0">
-                                <div class="col-2">
+                                <div class="col-2 col-xs-5">
                                     <div class="d-grid gap-2">
-                                        <button class="btn btn-sm btn-dark fw-bold" data-bs-toggle="modal" data-bs-target="#moderateModal_@comment.Id">Moderate</button>
+                                        <button id="adminPills" type="button" class="badge bg-warning fw-bold border-0" data-bs-toggle="modal" data-bs-target="#moderateModal_@comment.Id">Moderate</button>
                                     </div>
                                 </div>
-                                <div class="col-2 ms-2">
+                                <div class="col-2 col-xs-5 ms-5">
                                     <form asp-controller="Comments" asp-action="Delete">
                                         @Html.Hidden("Id", comment.Id)
                                         @Html.Hidden("Slug", Model.Slug)
                                         <div class="d-grid gap-2">
-                                            <button class="btn btn-sm btn-dark fw-bold">Delete</button>
+                                            <button type="button" id="adminPills" class="badge bg-danger fw-bold border-0">Delete</button>
                                         </div>
                                     </form>
                                 </div>
                             </div>
+                           
                         }
                     </div>
                 </div>
@@ -220,7 +227,7 @@
                             <div class="form-group">
                                 <textarea name="Body" class="form-control" required>@comment.Body</textarea>
                             </div>
-                            <button class="btn btn-sm btn-dark border-success fw-bold mt-2" type="submit">Submit</button>
+                            <button class="btn btn-sm btn-dark border-success fw-bold mt-4" type="submit">Save</button>
                         </form>
                     </div>
 
@@ -260,7 +267,7 @@
                             <div class="form-group">
                                 <div class="row">
                                     <div class="col">
-                                        <button class="btn btn-sm btn-dark border-success fw-bold" type="submit">Submit</button>
+                                        <button class="btn btn-sm btn-dark border-success fw-bold mt-4" type="submit">Save</button>
                                     </div>
                                 </div>
                             </div>
