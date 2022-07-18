@@ -38,7 +38,7 @@ namespace WeBlog.Controllers
             var defaultContentType = _configuration["DefaultPostImage"].Split(".")[1];
 
             ViewData["HeaderImage"] = _imageService.DecodeImage(defaultImage, defaultContentType);
-            ViewData["HeaderText"] = "Post Index";
+            ViewData["MainText"] = "Post Index";
             ViewData["SubText"] = "Get Your Daily Posts";
 
             var posts = _context.Posts.Include(p => p.Blog).Include(p => p.BlogUser);
@@ -54,7 +54,7 @@ namespace WeBlog.Controllers
             }
 
             var blog = await _context.Blogs.FindAsync(id);
-            ViewData["HeaderText"] = blog.Name;
+            ViewData["MainText"] = blog.Name;
             ViewData["SubText"] = blog.Description;
             ViewData["HeaderImage"] = _imageService.DecodeImage(blog.ImageData, blog.ContentType);
 
@@ -80,7 +80,7 @@ namespace WeBlog.Controllers
             var defaultContentType = _configuration["DefaultPostImage"].Split(".")[1];
 
             ViewData["HeaderImage"] = _imageService.DecodeImage(defaultImage, defaultContentType);
-            ViewData["HeaderText"] = "Post Search";
+            ViewData["MainText"] = "Post Search";
             ViewData["SubText"] = "The posts you searched for";
 
             var pageNumber = page ?? 1;

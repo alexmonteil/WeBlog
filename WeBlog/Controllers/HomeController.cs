@@ -32,7 +32,7 @@ namespace WeBlog.Controllers
             var defaultContentType = _configuration["DefaultHomePageImage"].Split(".")[1];
 
             ViewData["HeaderImage"] = _imageService.DecodeImage(defaultImage, defaultContentType);
-            ViewData["HeaderText"] = "(We)b + log = We Blog";
+            ViewData["MainText"] = "(We)b + log = We Blog";
             ViewData["SubText"] = "Sharing with others one line at a time";
 
             var pageNumber = page ?? 1;
@@ -50,8 +50,15 @@ namespace WeBlog.Controllers
             return View();
         }
 
-        public IActionResult Contact()
+        public async Task<IActionResult> Contact()
         {
+            var defaultImage = await _imageService.EncodeImageAsync(_configuration["DefaultContactPageImage"]);
+            var defaultContentType = _configuration["DefaultContactPageImage"].Split(".")[1];
+
+            ViewData["HeaderImage"] = _imageService.DecodeImage(defaultImage, defaultContentType);
+            ViewData["MainText"] = "Contact Me";
+            ViewData["SubText"] = "Share your ideas with me";
+
             return View();
         }
 
