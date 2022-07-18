@@ -1,4 +1,5 @@
-﻿using WeBlog.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using WeBlog.Data;
 using WeBlog.Models;
 
 namespace WeBlog.Services
@@ -15,7 +16,7 @@ namespace WeBlog.Services
 
         public IQueryable<Post> Search(string searchTerm)
         {
-            var posts = _context.Posts.Where(p => p.ReadyStatus == Enums.ReadyStatus.ProductionReady).AsQueryable();
+            var posts = _context.Posts.Include(p => p.BlogUser).Where(p => p.ReadyStatus == Enums.ReadyStatus.ProductionReady).AsQueryable();
 
             if (searchTerm is not null)
             {

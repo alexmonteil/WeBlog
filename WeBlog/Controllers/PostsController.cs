@@ -71,12 +71,23 @@ namespace WeBlog.Controllers
         // SearchIndex
         public async Task<IActionResult> SearchIndex(int? page, string searchTerm)
         {
-            ViewData["SearchTerm"] = searchTerm;
+            if (searchTerm is null)
+            {
+                return NotFound();
+            }
+
+            var defaultImage = await _imageService.EncodeImageAsync(_configuration["DefaultPostImage"]);
+            var defaultContentType = _configuration["DefaultPostImage"].Split(".")[1];
+
+            ViewData["HeaderImage"] = _imageService.DecodeImage(defaultImage, defaultContentType);
+            ViewData["HeaderText"] = "Post Search";
+            ViewData["SubText"] = "The posts you searched for";
+
             var pageNumber = page ?? 1;
             var pageSize = 5;
             var posts = _blogSearchService.Search(searchTerm);
 
-            return View(await posts.ToPagedListAsync(pageNumber, pageSize));
+            return View("BlogPostIndex", await posts.ToPagedListAsync(pageNumber, pageSize));
 
         }
 
