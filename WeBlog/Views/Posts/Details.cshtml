@@ -59,13 +59,13 @@
             <div class="col text-center fw-bold h3">
                 Custom Post Tags
             </div>
-            <div class="row gx-4 gx-lg-5">
-                <div class="col text-center">
-                    @foreach(var tag in Model.Tags)
-                    {
-                        <a class="btn btn-warning btn-sm btn-outline-dark" asp-action="TagIndex" asp-route-tag="@tag.Text.ToLower()">#@tag.Text</a>
-                    }
-                </div>
+        </div>
+        <div class="row gx-4 gx-lg-5">
+            <div class="col text-center">
+                @foreach(var tag in Model.Tags)
+                {
+                    <a class="btn btn-warning btn-sm btn-outline-dark" asp-action="TagIndex" asp-route-tag="@tag.Text.ToLower()">#@tag.Text</a>
+                }
             </div>
         </div>
     </div>
@@ -166,11 +166,11 @@
                         }
                         else if (comment.Moderated is not null)
                         {
-                            <p>@comment.ModeratedBody</p>
+                            <p class="small">@comment.ModeratedBody</p>
                         }
                         else if (comment.Deleted is null)
                         {
-                            <p>@comment.Body</p>
+                            <p class="small">@comment.Body</p>
                         }
 
                         @* SECTION 4 : Can we render the edit button ? *@
