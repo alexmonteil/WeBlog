@@ -27,6 +27,13 @@ namespace WeBlog.Controllers
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Index()
         {
+            var defaultImage = await _imageService.EncodeImageAsync(_configuration["DefaultBlogImage"]);
+            var defaultContentType = _configuration["DefaultBlogImage"].Split(".")[1];
+
+            ViewData["HeaderImage"] = _imageService.DecodeImage(defaultImage, defaultContentType);
+            ViewData["MainText"] = "Blog Index";
+            ViewData["SubText"] = "A List of all blogs";
+
             var blogs = _context.Blogs.Include(b => b.BlogUser);
             return View(await blogs.ToListAsync());
         }

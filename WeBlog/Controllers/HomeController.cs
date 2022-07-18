@@ -45,8 +45,16 @@ namespace WeBlog.Controllers
             return View(await blogs);
         }
 
-        public IActionResult About()
+        public async Task<IActionResult> About()
         {
+
+            var defaultImage = await _imageService.EncodeImageAsync(_configuration["DefaultAboutPageImage"]);
+            var defaultContentType = _configuration["DefaultAboutPageImage"].Split(".")[1];
+
+            ViewData["HeaderImage"] = _imageService.DecodeImage(defaultImage, defaultContentType);
+            ViewData["MainText"] = "About me";
+            ViewData["SubText"] = "Get to know the developer";
+
             return View();
         }
 
@@ -56,7 +64,7 @@ namespace WeBlog.Controllers
             var defaultContentType = _configuration["DefaultContactPageImage"].Split(".")[1];
 
             ViewData["HeaderImage"] = _imageService.DecodeImage(defaultImage, defaultContentType);
-            ViewData["MainText"] = "Contact Me";
+            ViewData["MainText"] = "Contact me";
             ViewData["SubText"] = "Share your ideas with me";
 
             return View();
