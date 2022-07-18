@@ -64,7 +64,10 @@
             <div class="col text-center">
                 @foreach(var tag in Model.Tags)
                 {
-                    <a class="btn btn-warning btn-sm btn-outline-dark" asp-action="TagIndex" asp-route-tag="@tag.Text.ToLower()">#@tag.Text</a>
+                    <form asp-controller="Posts" asp-action="SearchIndex">
+                       <input type="hidden" name="SearchTerm" value="@tag.Text.ToLower()">
+                       <button class="btn btn-warning btn-sm btn-outline-dark" type="submit">#@tag.Text</button>
+                    </form>
                 }
             </div>
         </div>
