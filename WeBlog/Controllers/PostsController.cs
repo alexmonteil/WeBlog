@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -17,21 +18,31 @@ namespace WeBlog.Controllers
         private readonly IImageService _imageService;
         private readonly UserManager<BlogUser> _userManager;
         private readonly BlogSearchService _blogSearchService;
+        private readonly IConfiguration _configuration;
 
-        public PostsController(ApplicationDbContext context, ISlugService slugService, IImageService imageService, UserManager<BlogUser> userManager, BlogSearchService blogSearchService)
+        public PostsController(ApplicationDbContext context, ISlugService slugService, IImageService imageService, UserManager<BlogUser> userManager, BlogSearchService blogSearchService, IConfiguration configuration)
         {
             _context = context;
             _slugService = slugService;
             _imageService = imageService;
             _userManager = userManager;
             _blogSearchService = blogSearchService;
+            _configuration = configuration;
         }
 
         // GET: Posts
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Posts.Include(p => p.Blog).Include(p => p.BlogUser);
-            return View(await applicationDbContext.ToListAsync());
+            var defaultImage = await _imageService.EncodeImageAsync(_configuration["DefaultPostImage"]);
+            var defaultContentType = _configuration["DefaultPostImage"].Split(".")[1];
+
+            ViewData["HeaderImage"] = _imageService.DecodeImage(defaultImage, defaultContentType);
+            ViewData["HeaderText"] = "Post Index";
+            ViewData["SubText"] = "Get Your Daily Posts";
+
+            var posts = _context.Posts.Include(p => p.Blog).Include(p => p.BlogUser);
+            return View(await posts.ToListAsync());
         }
 
         // BlogPostIndex
@@ -41,6 +52,11 @@ namespace WeBlog.Controllers
             {
                 return NotFound();
             }
+
+            var blog = await _context.Blogs.FindAsync(id);
+            ViewData["HeaderText"] = blog.Name;
+            ViewData["SubText"] = blog.Description;
+            ViewData["HeaderImage"] = _imageService.DecodeImage(blog.ImageData, blog.ContentType);
 
             var pageNumber = page ?? 1;
             var pageSize = 5;
@@ -93,6 +109,7 @@ namespace WeBlog.Controllers
         }
 
         // GET: Posts/Create
+        [Authorize(Roles = "Administrator")]
         public IActionResult Create()
         {
             ViewData["BlogId"] = new SelectList(_context.Blogs, "Id", "Name");
@@ -104,14 +121,15 @@ namespace WeBlog.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Create([Bind("BlogId,Title,Abstract,Content,ReadyStatus,Image")] Post post, List<string> tagValues)
         {
             if (ModelState.IsValid)
             {
                 if (post.Image != null)
                 {
-                    post.ImageData = await _imageService.EncodeImageAsync(post.Image);
-                    post.ContentType = _imageService.ContentType(post.Image);
+                    post.ImageData = (await _imageService.EncodeImageAsync(post.Image)) ?? (await _imageService.EncodeImageAsync(_configuration["DefaultPostImage"]));
+                    post.ContentType = (_imageService.ContentType(post.Image)) ?? (_configuration["DefaultPostImage"].Split(".")[1]);
                 }
 
                 post.Created = DateTime.UtcNow;
@@ -156,7 +174,7 @@ namespace WeBlog.Controllers
                 }
 
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("BlogPostIndex", new { id = post.BlogId });
             }
 
             ViewData["BlogId"] = new SelectList(_context.Blogs, "Id", "Description", post.BlogId);
@@ -165,6 +183,7 @@ namespace WeBlog.Controllers
         }
 
         // GET: Posts/Edit/5
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Posts == null)
@@ -187,6 +206,7 @@ namespace WeBlog.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Edit(int id, [Bind("Id,BlogId,Title,Abstract,Content,ReadyStatus,Image")] Post post, List<string> tagValues)
         {
             if (id != post.Id)
@@ -270,7 +290,7 @@ namespace WeBlog.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("BlogPostIndex", "Posts", new { id = post.BlogId });
             }
 
             ViewData["BlogId"] = new SelectList(_context.Blogs, "Id", "Description", post.BlogId);
@@ -279,6 +299,7 @@ namespace WeBlog.Controllers
         }
 
         // GET: Posts/Delete/5
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Posts == null)
@@ -301,6 +322,7 @@ namespace WeBlog.Controllers
         // POST: Posts/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Posts == null)
