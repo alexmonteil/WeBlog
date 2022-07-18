@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,7 @@ using WeBlog.Models;
 
 namespace WeBlog.Controllers
 {
+    [Authorize]
     public class CommentsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -20,6 +22,7 @@ namespace WeBlog.Controllers
 
 
         // GET: non-moderated Comments
+        [Authorize(Roles = "Administrator, Moderator")]
         public async Task<IActionResult> OriginalIndex()
         {
             var originalComments = await _context.Comments.ToListAsync();
@@ -27,6 +30,7 @@ namespace WeBlog.Controllers
         }
 
         // GET: moderated Comments
+        [Authorize(Roles = "Administrator, Moderator")]
         public async Task<IActionResult> ModeratedIndex()
         {
             var moderatedComments = await _context.Comments.Where(c => c.Moderated != null).ToListAsync();
@@ -34,6 +38,7 @@ namespace WeBlog.Controllers
         }
 
         // GET: deleted Comments
+        [Authorize(Roles = "Administrator, Moderator")]
         public async Task<IActionResult> DeletedIndex()
         {
             var deletedComments = await _context.Comments.Where(c => c.Deleted != null).ToListAsync();
@@ -127,6 +132,7 @@ namespace WeBlog.Controllers
             return View(comment);
         }
 
+        [Authorize(Roles = "Administrator, Moderator")]
         public async Task<IActionResult> Moderate(int id, [Bind("Id,Body,ModeratedBody,ModerationType")] Comment comment)
         {
             if (id != comment.Id)
@@ -165,6 +171,7 @@ namespace WeBlog.Controllers
         }
 
         // GET: Comments/Delete/5
+        [Authorize(Roles = "Administrator, Moderator")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Comments == null)
@@ -188,6 +195,7 @@ namespace WeBlog.Controllers
         // POST: Comments/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator, Moderator")]
         public async Task<IActionResult> DeleteConfirmed(int id, string slug)
         {
             if (_context.Comments == null)
