@@ -14,16 +14,26 @@ namespace WeBlog.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IBlogEmailSender _emailSender;
         private readonly ApplicationDbContext _context;
+        private readonly IImageService _imageService;
+        private readonly IConfiguration _configuration;
 
-        public HomeController(ILogger<HomeController> logger, IBlogEmailSender emailSender, ApplicationDbContext context)
+        public HomeController(ILogger<HomeController> logger, IBlogEmailSender emailSender, ApplicationDbContext context, IImageService imageService, IConfiguration configuration)
         {
             _logger = logger;
             _emailSender = emailSender;
             _context = context;
+            _imageService = imageService;
+            _configuration = configuration;
         }
 
         public async Task<IActionResult> Index(int? page)
         {
+            var defaultImage = await _imageService.EncodeImageAsync(_configuration["DefaultHomePageImage"]);
+            var defaultContentType = _configuration["DefaultHomePageImage"].Split(".")[1];
+
+            ViewData["HeaderImage"] = _imageService.DecodeImage(defaultImage, defaultContentType);
+            ViewData["HeaderText"] = "(We)b + log = We Blog";
+            ViewData["SubText"] = "Sharing with others one line at a time";
 
             var pageNumber = page ?? 1;
             var pageSize = 5;

@@ -85,6 +85,10 @@ namespace WeBlog.Controllers
                 return NotFound();
             }
 
+            ViewData["HeaderImage"] = _imageService.DecodeImage(post.ImageData, post.ContentType);
+            ViewData["MainText"] = post.Title;
+            ViewData["SubText"] = post.Abstract;
+
             return View(post);
         }
 
