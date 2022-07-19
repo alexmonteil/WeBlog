@@ -126,11 +126,11 @@
                         
                         @if(comment.Deleted is not null)
                         {
-                            <span class="small fst-italic">Deleted on @comment.Deleted?.ToString("MMM dd, yyyy")</span>
+                            <span class="small fst-italic fs-6">Deleted on @comment.Deleted?.ToString("MMM dd, yyyy")</span>
                         }
                         else if(comment.Moderated is not null)
                         {
-                            <span class="small">
+                            <span class="small fs-6">
                                 <span class="fw-bolder">
                                     Moderated for reason: <span class="text-danger fst-italic">@comment.ModerationType.ToString()</span>
                                 </span>
@@ -139,11 +139,11 @@
                         }
                         else if (comment.Updated is not null)
                         {
-                            <span class="small fst-italic">Updated on @comment.Updated?.ToString("MMM dd, yyyy")</span>
+                            <span class="small fst-italic fs-6">Updated on @comment.Updated?.ToString("MMM dd, yyyy")</span>
                         }
                         else
                         {
-                            <span class="small fst-italic">Posted on @comment.Created.ToString("MMM dd, yyyy")</span>   
+                            <span class="small fst-italic fs-6">Posted on @comment.Created.ToString("MMM dd, yyyy")</span>   
                         }
                     
                         <br/>
@@ -152,11 +152,11 @@
 
                         @if (comment.Deleted is not null)
                         {
-                            <span class="small fst-italic">The comment posted on @comment.Created.ToString("MMM dd, yyyy") by @comment.BlogUser.DisplayName was deleted by the Moderator...</span>
+                            <span class="small fst-italic fs-6">The comment posted on @comment.Created.ToString("MMM dd, yyyy") by @comment.BlogUser.DisplayName was deleted by the Moderator...</span>
                         }
                         else if (comment.Moderated is not null)
                         {
-                            <span class="small fst-italic">The comment posted on @comment.Created.ToString("MMM dd, yyyy") by @comment.BlogUser.DisplayName has been Moderated...</span>
+                            <span class="small fst-italic fs-6">The comment posted on @comment.Created.ToString("MMM dd, yyyy") by @comment.BlogUser.DisplayName has been Moderated...</span>
                         }
 
                         <hr />
