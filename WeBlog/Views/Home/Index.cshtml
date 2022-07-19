@@ -11,13 +11,17 @@
 
 
 @if (User.IsInRole("Administrator"))
-{   
-    <div class="row ms-2">
-        <p>
-            <a id="adminPills" class="btn btn-outline-primary text-decoration-none"
-               asp-controller="Blogs"
-               asp-action="Create"><i class="far fa-folder-open"></i> New Blog</a>
-        </p>
+{
+    <div class="container px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5">
+            <div class="col">
+                <p>
+                    <a id="adminPills" class="btn btn-outline-primary text-decoration-none"
+                        asp-controller="Blogs"
+                        asp-action="Create"><i class="far fa-folder-open"></i> New Blog</a>
+                </p>
+            </div>
+        </div>
     </div>
 }
 
@@ -25,14 +29,16 @@
 
 @if(Model.PageCount > 1)
 {
-    <div class="row ms-2">
-        <div class="col">
-            @Html.PagedListPager(Model, page => Url.Action("Index", new { page = page }),
-            new PagedListRenderOptions
-            {
-                LiElementClasses = new string[] { "page-item" },
-                PageClasses = new string[] { "page-link" }
-            })
+    <div class="container px-4 px-lg-5 mb-4">
+        <div class="row gx-4 gx-lg-5">
+            <div class="col">
+                @Html.PagedListPager(Model, page => Url.Action("Index", new { page = page }),
+                new PagedListRenderOptions
+                {
+                    LiElementClasses = new string[] { "page-item" },
+                    PageClasses = new string[] { "page-link" }
+                })
+            </div>
         </div>
     </div>
 }
@@ -40,65 +46,68 @@
 <!-- Main Content-->
 <div class="container px-4 px-lg-5">
     <div class="row gx-4 gx-lg-5">
-        @foreach (var blog in Model)
-        {
-            <div class="post-preview">
+        <div class="col">
+            @foreach (var blog in Model)
+            {
+                <div class="post-preview">
+                    <div class="row">
+                        <div class="col-12 col-md-4">
+                            <img id="blogImage" class="card-img-top img-fluid" src="@imageService.DecodeImage(blog.ImageData, blog.ContentType)" alt="Blog logo" />
+                            <a class="btn btn-dark w-100 mb-3" asp-controller="Posts" asp-action="BlogPostIndex" asp-route-id="@blog.Id">Read Posts</a>
+                        </div>
+                        <div class="col col-md-8">
+                            <a asp-controller="Posts" asp-action="BlogPostIndex" asp-route-id="@blog.Id">
+                                <h2 class="post-title">@blog.Name</h2>
+                            </a>
+                            <h3 class="post-subtitle text-black-50 fw-normal">@blog.Description</h3>
+                            <p class="post-meta">
+                                Posted by
+                                @blog.BlogUser.DisplayName
+                                on @blog.Created.ToString("MMM dd, yyyy")
+                            </p>
 
-                <div class="row">
-                    <div class="col-12 col-md-4">
-                        <img id="blogImage" class="card-img-top img-fluid" src="@imageService.DecodeImage(blog.ImageData, blog.ContentType)" alt="Blog logo" />
-                        <a class="btn btn-dark w-100 mb-3" asp-controller="Posts" asp-action="BlogPostIndex" asp-route-id="@blog.Id">Read Posts</a>
+
+                            @if (User.IsInRole("Administrator"))
+                            {
+                                <a id="adminPills" class="badge bg-primary text-decoration-none"
+                                   asp-action="Create"
+                                   asp-controller="Posts"
+                                   asp-route-blogId="@blog.Id">Create Post</a>
+
+                                <a id="adminPills" class="badge bg-success text-decoration-none"
+                                   asp-action="Edit"
+                                   asp-controller="Blogs"
+                                   asp-route-id="@blog.Id">Edit Blog</a>
+
+                                <a id="adminPills" class="badge bg-danger text-decoration-none"
+                                   asp-action="Delete"
+                                   asp-controller="Blogs"
+                                   asp-route-id="@blog.Id">Delete Blog</a>
+                            }
+
+                        </div>
                     </div>
-                    <div class="col col-md-8">
-                        <a asp-controller="Posts" asp-action="BlogPostIndex" asp-route-id="@blog.Id">
-                            <h2 class="post-title">@blog.Name</h2>
-                        </a>
-                        <h3 class="post-subtitle text-black-50 fw-normal">@blog.Description</h3>
-                        <p class="post-meta">
-                            Posted by
-                            @blog.BlogUser.DisplayName
-                            on @blog.Created.ToString("MMM dd, yyyy")
-                        </p>
+                    <hr />
 
-
-                        @if (User.IsInRole("Administrator"))
-                        {
-                            <a id="adminPills" class="badge bg-primary text-decoration-none"
-                               asp-action="Create"
-                               asp-controller="Posts"
-                               asp-route-blogId="@blog.Id">Create Post</a>
-
-                            <a id="adminPills" class="badge bg-success text-decoration-none"
-                               asp-action="Edit"
-                               asp-controller="Blogs"
-                               asp-route-id="@blog.Id">Edit Blog</a>
-
-                            <a id="adminPills" class="badge bg-danger text-decoration-none"
-                               asp-action="Delete"
-                               asp-controller="Blogs"
-                               asp-route-id="@blog.Id">Delete Blog</a>
-                        }
-
-                    </div>
                 </div>
-                <hr />
-
-            </div>
-        }
+            }
+        </div>
     </div>
 </div>
 
 
 @if(Model.PageCount > 1)
 {
-    <div class="row ms-2">
-        <div class="col">
-            @Html.PagedListPager(Model, page => Url.Action("Index", new { page = page }),
-            new PagedListRenderOptions
-            {
-                LiElementClasses = new string[] { "page-item" },
-                PageClasses = new string[] { "page-link" }
-            })
+    <div class="container px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5">
+            <div class="col">
+                @Html.PagedListPager(Model, page => Url.Action("Index", new { page = page }),
+                new PagedListRenderOptions
+                {
+                    LiElementClasses = new string[] { "page-item" },
+                    PageClasses = new string[] { "page-link" }
+                })
+            </div>
         </div>
     </div>
 }

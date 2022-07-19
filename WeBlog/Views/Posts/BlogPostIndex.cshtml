@@ -11,24 +11,24 @@
 
 @if (User.IsInRole("Administrator"))
 {
-    <div class="row ms-2">
-        <p>
-            <a id="adminPills" class="btn btn-outline-primary text-decoration-none" 
-               asp-action="Create" 
-               asp-route-blogid="@Model.FirstOrDefault()?.BlogId"><i class="fas fa-pencil-alt"></i>New Post</a>
-        </p>
+    <div class="container px-4 px-lg-5 mb-3">
+        <div class="row gx-4 gx-lg-5">
+            <p>
+                <a id="adminPills" class="btn btn-outline-primary text-decoration-none" 
+                   asp-action="Create" 
+                   asp-route-blogid="@Model.FirstOrDefault()?.BlogId"><i class="fas fa-pencil-alt"></i>New Post</a>
+            </p>
+        </div>
     </div>
 }
 
 
 <div class="container px-4 px-lg-5 mb-3">
     <div class="row gx-4 gx-lg-5">
-        <div class="row">
-            <div class="col-12 col-md-4">
-                <a id="adminPills" class="badge bg-dark text-decoration-none"
-                    asp-action="Index"
-                    asp-controller="Home">Return to Blog List</a>
-            </div>
+        <div class="col-12 col-md-4">
+            <a id="adminPills" class="badge bg-dark text-decoration-none"
+                asp-action="Index"
+                asp-controller="Home">Return to Blog List</a>
         </div>
     </div>
 </div>
@@ -51,41 +51,43 @@
 <!-- Main Content-->
 <div class="container px-4 px-lg-5">
     <div class="row gx-4 gx-lg-5">
-        @foreach (var post in Model)
-        {
-            <div class="row">
-                <div class="col-12 col-md-4">
-                    <img id="postImage" class="card-img-top img-fluid" src="@imageService.DecodeImage(post.ImageData, post.ContentType)" />
-                    <a class="btn btn-dark w-100" asp-controller="Posts" asp-action="Details" asp-route-slug="@post.Slug">Read Full Post</a>
+        <div class="col">
+            @foreach (var post in Model)
+            {
+                <div class="row">
+                    <div class="col-12 col-md-4">
+                        <img id="postImage" class="card-img-top img-fluid" src="@imageService.DecodeImage(post.ImageData, post.ContentType)" />
+                        <a class="btn btn-dark w-100" asp-controller="Posts" asp-action="Details" asp-route-slug="@post.Slug">Read Full Post</a>
+                    </div>
+                    <div class="col col-md-8">
+                        <a asp-controller="Posts" asp-action="Details" asp-route-slug="@post.Slug">
+                            <h2 class="post-title">@post.Title</h2>
+                        </a>
+                        <h3 class="post-subtitle text-black-50 fw-normal">@post.Abstract</h3>
+                        <p class="post-meta">
+                            Posted by
+                            @post.BlogUser.DisplayName
+                            on @post.Created.ToString("MMM dd, yyyy")
+                        </p>
+
+                        @if (User.IsInRole("Administrator"))
+                        {
+                            <a id="adminPills" class="badge bg-success text-decoration-none"
+                               asp-action="Edit"
+                               asp-controller="Posts"
+                               asp-route-id="@post.Id">Edit Post</a>
+
+                            <a id="adminPills" class="badge bg-danger text-decoration-none"
+                               asp-action="Delete"
+                               asp-controller="Posts"
+                               asp-route-id="@post.Id">Delete Post</a>
+                        }
+
+                    </div>
                 </div>
-                <div class="col col-md-8">
-                    <a asp-controller="Posts" asp-action="Details" asp-route-slug="@post.Slug">
-                        <h2 class="post-title">@post.Title</h2>
-                    </a>
-                    <h3 class="post-subtitle text-black-50 fw-normal">@post.Abstract</h3>
-                    <p class="post-meta">
-                        Posted by
-                        @post.BlogUser.DisplayName
-                        on @post.Created.ToString("MMM dd, yyyy")
-                    </p>
-
-                    @if (User.IsInRole("Administrator"))
-                    {
-                        <a id="adminPills" class="badge bg-success text-decoration-none"
-                           asp-action="Edit"
-                           asp-controller="Posts"
-                           asp-route-id="@post.Id">Edit Post</a>
-
-                        <a id="adminPills" class="badge bg-danger text-decoration-none"
-                           asp-action="Delete"
-                           asp-controller="Posts"
-                           asp-route-id="@post.Id">Delete Post</a>
-                    }
-
-                </div>
-            </div>
-            <hr />
-        }
+                <hr />
+            }
+        </div>
     </div>
 </div>
 
