@@ -39,7 +39,7 @@ namespace WeBlog.Controllers
 
             ViewData["HeaderImage"] = _imageService.DecodeImage(defaultImage, defaultContentType);
             ViewData["MainText"] = "Post Index";
-            ViewData["SubText"] = "Get Your Daily Posts";
+            ViewData["SubText"] = "A List of all posts";
 
             var posts = _context.Posts.Include(p => p.Blog).Include(p => p.BlogUser);
             return View(await posts.ToListAsync());
@@ -112,7 +112,17 @@ namespace WeBlog.Controllers
                 return NotFound();
             }
 
-            ViewData["HeaderImage"] = _imageService.DecodeImage(post.ImageData, post.ContentType);
+            if (post.ImageData != null)
+            {
+                ViewData["HeaderImage"] = _imageService.DecodeImage(post.ImageData, post.ContentType);
+            } 
+            else
+            {
+                var defaultImage = await _imageService.EncodeImageAsync(_configuration["DefaultPostImage"]);
+                var defaultContentType = _configuration["DefaultPostImage"].Split(".")[1];
+                ViewData["HeaderImage"] = _imageService.DecodeImage(defaultImage, defaultContentType);
+            }
+            
             ViewData["MainText"] = post.Title;
             ViewData["SubText"] = post.Abstract;
 
@@ -121,8 +131,15 @@ namespace WeBlog.Controllers
 
         // GET: Posts/Create
         [Authorize(Roles = "Administrator")]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            var defaultImage = await _imageService.EncodeImageAsync(_configuration["DefaultPostImage"]);
+            var defaultContentType = _configuration["DefaultPostImage"].Split(".")[1];
+
+            ViewData["HeaderImage"] = _imageService.DecodeImage(defaultImage, defaultContentType);
+            ViewData["MainText"] = "Create Post";
+            ViewData["SubText"] = "Sharing ideas with the world";
+
             ViewData["BlogId"] = new SelectList(_context.Blogs, "Id", "Name");
             return View();
         }
@@ -139,8 +156,8 @@ namespace WeBlog.Controllers
             {
                 if (post.Image != null)
                 {
-                    post.ImageData = (await _imageService.EncodeImageAsync(post.Image)) ?? (await _imageService.EncodeImageAsync(_configuration["DefaultPostImage"]));
-                    post.ContentType = (_imageService.ContentType(post.Image)) ?? (_configuration["DefaultPostImage"].Split(".")[1]);
+                    post.ImageData = await _imageService.EncodeImageAsync(post.Image);
+                    post.ContentType = _imageService.ContentType(post.Image);
                 }
 
                 post.Created = DateTime.UtcNow;
@@ -188,6 +205,13 @@ namespace WeBlog.Controllers
                 return RedirectToAction("BlogPostIndex", new { id = post.BlogId });
             }
 
+            var defaultImage = await _imageService.EncodeImageAsync(_configuration["DefaultPostImage"]);
+            var defaultContentType = _configuration["DefaultPostImage"].Split(".")[1];
+
+            ViewData["HeaderImage"] = _imageService.DecodeImage(defaultImage, defaultContentType);
+            ViewData["MainText"] = "Create Post";
+            ViewData["SubText"] = "Sharing ideas with the world";
+
             ViewData["BlogId"] = new SelectList(_context.Blogs, "Id", "Description", post.BlogId);
 
             return View(post);
@@ -207,6 +231,20 @@ namespace WeBlog.Controllers
             {
                 return NotFound();
             }
+
+            if (post.ImageData is not null)
+            {
+                ViewData["HeaderImage"] = _imageService.DecodeImage(post.ImageData, post.ContentType);
+            }
+            else
+            {
+                var defaultImage = await _imageService.EncodeImageAsync(_configuration["DefaultPostImage"]);
+                var defaultContentType = _configuration["DefaultPostImage"].Split(".")[1];
+                ViewData["HeaderImage"] = _imageService.DecodeImage(defaultImage, defaultContentType);
+            }
+            
+            ViewData["MainText"] = "Edit Post";
+            ViewData["SubText"] = "Change the content to match your thoughts";
             ViewData["BlogId"] = new SelectList(_context.Blogs, "Id", "Name", post.BlogId);
             ViewData["TagValues"] = string.Join(",", post.Tags.Select(t => t.Text));
             return View(post);
@@ -304,6 +342,12 @@ namespace WeBlog.Controllers
                 return RedirectToAction("BlogPostIndex", "Posts", new { id = post.BlogId });
             }
 
+            var defaultImage = await _imageService.EncodeImageAsync(_configuration["DefaultPostImage"]);
+            var defaultContentType = _configuration["DefaultPostImage"].Split(".")[1];
+
+            ViewData["HeaderImage"] = _imageService.DecodeImage(defaultImage, defaultContentType);
+            ViewData["MainText"] = "Edit Post";
+            ViewData["SubText"] = "Change the content to match your thoughts";
             ViewData["BlogId"] = new SelectList(_context.Blogs, "Id", "Description", post.BlogId);
 
             return View(post);

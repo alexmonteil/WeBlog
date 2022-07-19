@@ -42,6 +42,7 @@ namespace WeBlog.Controllers
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Details(int? id)
         {
+
             if (id == null || _context.Blogs == null)
             {
                 return NotFound();
@@ -50,18 +51,40 @@ namespace WeBlog.Controllers
             var blog = await _context.Blogs
                 .Include(b => b.BlogUser)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (blog == null)
             {
                 return NotFound();
             }
+
+            if (blog.ImageData is not null)
+            {
+                ViewData["HeaderImage"] = _imageService.DecodeImage(blog.ImageData, blog.ContentType);
+            }
+            else
+            {
+                var defaultImage = await _imageService.EncodeImageAsync(_configuration["DefaultBlogImage"]);
+                var defaultContentType = _configuration["DefaultBlogImage"].Split(".")[1];
+                ViewData["HeaderImage"] = _imageService.DecodeImage(defaultImage, defaultContentType);
+            }
+
+            ViewData["MainText"] = "Blog Details";
+            ViewData["SubText"] = "The in-depth content";
 
             return View(blog);
         }
 
         // GET: Blogs/Create
         [Authorize(Roles = "Administrator")]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            var defaultImage = await _imageService.EncodeImageAsync(_configuration["DefaultBlogImage"]);
+            var defaultContentType = _configuration["DefaultBlogImage"].Split(".")[1];
+
+            ViewData["HeaderImage"] = _imageService.DecodeImage(defaultImage, defaultContentType);
+            ViewData["MainText"] = "Create Blog";
+            ViewData["SubText"] = "Add content to people's lives";
+
             return View();
         }
 
@@ -83,7 +106,13 @@ namespace WeBlog.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            
+
+            var defaultImage = await _imageService.EncodeImageAsync(_configuration["DefaultBlogImage"]);
+            var defaultContentType = _configuration["DefaultBlogImage"].Split(".")[1];
+            ViewData["HeaderImage"] = _imageService.DecodeImage(defaultImage, defaultContentType);
+            ViewData["MainText"] = "Create Blog";
+            ViewData["SubText"] = "Add content to people's lives";
+
             return View(blog);
         }
 
@@ -101,7 +130,21 @@ namespace WeBlog.Controllers
             {
                 return NotFound();
             }
-           
+
+            if (blog.ImageData is not null)
+            {
+                ViewData["HeaderImage"] = _imageService.DecodeImage(blog.ImageData, blog.ContentType);
+            }
+            else
+            {
+                var defaultImage = await _imageService.EncodeImageAsync(_configuration["DefaultBlogImage"]);
+                var defaultContentType = _configuration["DefaultBlogImage"].Split(".")[1];
+                ViewData["HeaderImage"] = _imageService.DecodeImage(defaultImage, defaultContentType);
+            }
+
+            ViewData["MainText"] = "Edit Blog";
+            ViewData["SubText"] = "Change the content you are sharing";
+
             return View(blog);
         }
 
@@ -145,7 +188,13 @@ namespace WeBlog.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            
+
+            var defaultImage = await _imageService.EncodeImageAsync(_configuration["DefaultBlogImage"]);
+            var defaultContentType = _configuration["DefaultBlogImage"].Split(".")[1];
+            ViewData["HeaderImage"] = _imageService.DecodeImage(defaultImage, defaultContentType);
+            ViewData["MainText"] = "Edit Blog";
+            ViewData["SubText"] = "Change the content you are sharing";
+
             return View(blog);
         }
 
