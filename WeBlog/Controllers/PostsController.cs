@@ -353,26 +353,6 @@ namespace WeBlog.Controllers
             return View(post);
         }
 
-        // GET: Posts/Delete/5
-        [Authorize(Roles = "Administrator")]
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null || _context.Posts == null)
-            {
-                return NotFound();
-            }
-
-            var post = await _context.Posts
-                .Include(p => p.Blog)
-                .Include(p => p.BlogUser)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (post == null)
-            {
-                return NotFound();
-            }
-
-            return View(post);
-        }
 
         // POST: Posts/Delete/5
         [HttpPost, ActionName("Delete")]
@@ -394,6 +374,28 @@ namespace WeBlog.Controllers
             
             await _context.SaveChangesAsync();
             return RedirectToAction("BlogPostIndex", "Posts", new { id = post.BlogId });
+        }
+
+        // POST: Posts/DeleteFromIndex/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> DeleteFromIndex(int id)
+        {
+            if (_context.Posts == null)
+            {
+                return Problem("Entity set 'ApplicationDbContext.Posts'  is null.");
+            }
+
+            var post = await _context.Posts.FindAsync(id);
+
+            if (post != null)
+            {
+                _context.Posts.Remove(post);
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         private bool PostExists(int id)
