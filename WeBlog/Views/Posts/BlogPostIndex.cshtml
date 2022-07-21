@@ -94,7 +94,7 @@
                             <!-- Modal Body -->
                             <div class="modal-body">
                                 <form asp-controller="Posts" asp-action="Delete" method="POST">
-                                    @Html.Hidden("Id", post.Id)
+                                    <input type="hidden" name="Id" for="Id" value="@post.Id" />
                                     <div class="form-group">
                                         <label class="control-label">Post Title</label>
                                         <input name="Title" class="form-control" disabled style="resize: none;" value="@post.Title"/>
