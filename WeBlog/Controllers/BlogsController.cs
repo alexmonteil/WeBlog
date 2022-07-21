@@ -219,6 +219,26 @@ namespace WeBlog.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        // POST: Blogs/DeleteFromIndex/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> DeleteFromIndex(int id)
+        {
+            if (_context.Blogs == null)
+            {
+                return Problem("Entity set 'ApplicationDbContext.Blogs'  is null.");
+            }
+            var blog = await _context.Blogs.FindAsync(id);
+            if (blog != null)
+            {
+                _context.Blogs.Remove(blog);
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
         private bool BlogExists(int id)
         {
           return (_context.Blogs?.Any(e => e.Id == id)).GetValueOrDefault();
