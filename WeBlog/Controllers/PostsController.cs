@@ -131,22 +131,35 @@ namespace WeBlog.Controllers
 
         // GET: Posts/Create
         [Authorize(Roles = "Administrator")]
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Create(int? blogId)
         {
-            var defaultImage = await _imageService.EncodeImageAsync(_configuration["DefaultPostImage"]);
-            var defaultContentType = _configuration["DefaultPostImage"].Split(".")[1];
 
-            ViewData["HeaderImage"] = _imageService.DecodeImage(defaultImage, defaultContentType);
+            var post = new Post();
+
+            if (blogId is null)
+            {
+                var defaultImage = await _imageService.EncodeImageAsync(_configuration["DefaultPostImage"]);
+                var defaultContentType = _configuration["DefaultPostImage"].Split(".")[1];
+
+                ViewData["HeaderImage"] = _imageService.DecodeImage(defaultImage, defaultContentType);
+                ViewData["BlogId"] = new SelectList(_context.Blogs, "Id", "Name");
+            }
+            else
+            {
+                var blog = await _context.Blogs.FindAsync(blogId);
+                post.BlogId = (int)blogId;
+                ViewData["HeaderImage"] = _imageService.DecodeImage(blog.ImageData, blog.ContentType);
+                
+            }
+
             ViewData["MainText"] = "Create Post";
             ViewData["SubText"] = "Sharing ideas with the world";
 
-            ViewData["BlogId"] = new SelectList(_context.Blogs, "Id", "Name");
-            return View();
+            return View(post);
         }
 
         // POST: Posts/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Administrator")]
@@ -217,6 +230,93 @@ namespace WeBlog.Controllers
             return View(post);
         }
 
+        // GET: Posts/CreateFromIndex
+        [Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> CreateFromIndex()
+        {
+            var defaultImage = await _imageService.EncodeImageAsync(_configuration["DefaultPostImage"]);
+            var defaultContentType = _configuration["DefaultPostImage"].Split(".")[1];
+
+            ViewData["HeaderImage"] = _imageService.DecodeImage(defaultImage, defaultContentType);
+            ViewData["MainText"] = "Create Post";
+            ViewData["SubText"] = "Sharing ideas with the world";
+
+            ViewData["BlogId"] = new SelectList(_context.Blogs, "Id", "Name");
+            return View();
+        }
+
+        // POST: Posts/CreateFromIndex
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> CreateFromIndex([Bind("BlogId,Title,Abstract,Content,ReadyStatus,Image")] Post post, List<string> tagValues)
+        {
+            if (ModelState.IsValid)
+            {
+                if (post.Image != null)
+                {
+                    post.ImageData = await _imageService.EncodeImageAsync(post.Image);
+                    post.ContentType = _imageService.ContentType(post.Image);
+                }
+
+                post.Created = DateTime.UtcNow;
+                var authorId = _userManager.GetUserId(User);
+                post.BlogUserId = authorId;
+                var slug = _slugService.UrlFriendly(post.Title);
+                bool validationError = false;
+
+                // Detect null or empty slug
+                if (string.IsNullOrEmpty(slug))
+                {
+                    ModelState.AddModelError("", "The title you provided cannot be used as it results in an empty slug");
+                    validationError = true;
+                }
+
+                // Detect duplicate slug
+                if (!_slugService.IsUnique(slug))
+                {
+                    ModelState.AddModelError("Title", "The title you provided cannot be used as it results in a duplicate slug");
+                    validationError = true;
+                }
+
+                // if validation errors exist, return necessary data to the view
+                if (validationError)
+                {
+                    ViewData["TagValues"] = string.Join(",", tagValues);
+                    return View(post);
+                }
+
+                post.Slug = slug;
+                _context.Add(post);
+                await _context.SaveChangesAsync();
+
+                foreach (string tagText in tagValues)
+                {
+                    _context.Add(new Tag()
+                    {
+                        PostId = post.Id,
+                        BlogUserId = authorId,
+                        Text = tagText
+                    });
+                }
+
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+
+            var defaultImage = await _imageService.EncodeImageAsync(_configuration["DefaultPostImage"]);
+            var defaultContentType = _configuration["DefaultPostImage"].Split(".")[1];
+
+            ViewData["HeaderImage"] = _imageService.DecodeImage(defaultImage, defaultContentType);
+            ViewData["MainText"] = "Create Post";
+            ViewData["SubText"] = "Sharing ideas with the world";
+
+            ViewData["BlogId"] = new SelectList(_context.Blogs, "Id", "Description", post.BlogId);
+
+            return View(post);
+        }
+
         // GET: Posts/Edit/5
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> Edit(int? id)
@@ -252,7 +352,6 @@ namespace WeBlog.Controllers
 
         // POST: Posts/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Administrator")]
