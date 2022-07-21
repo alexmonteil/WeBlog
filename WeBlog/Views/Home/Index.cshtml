@@ -79,16 +79,55 @@
                                    asp-controller="Blogs"
                                    asp-route-id="@blog.Id">Edit Blog</a>
 
-                                <a id="adminPills" class="badge bg-danger text-decoration-none"
+                                /*<a id="adminPills" class="badge bg-danger text-decoration-none"
                                    asp-action="Delete"
                                    asp-controller="Blogs"
-                                   asp-route-id="@blog.Id">Delete Blog</a>
+                                   asp-route-id="@blog.Id">Delete Blog</a>*/
+                                <button id="adminPills" type="button" class="badge bg-danger fw-bold border-0" data-bs-toggle="modal" data-bs-target="#deleteModal_@blog.Id">Delete</button>
                             }
 
                         </div>
                     </div>
                     <hr />
 
+                </div>
+
+                @* Moderate Modal *@
+                <div class="modal" id="deleteModal_@blog.Id">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <!-- Modal Header -->
+                            <div class="modal-header">
+                                <h4 class="modal-title">Deleting Blog...</h4>
+                            </div>
+                            <!-- Modal Body -->
+                            <div class="modal-body">
+                                <form asp-controller="Blogs" asp-action="Delete" method="POST">
+                                    @Html.Hidden("Id", blog.Id)
+                                    <div class="form-group">
+                                        <label class="control-label">Blog Name</label>
+                                        <input name="Name" class="form-control" disabled style="resize: none;" value="@blog.Name"/>
+                                    </div>
+                                    <div class="form-group mt-4">
+                                        <label class="control-label">Blog Description</label>
+                                        <textarea name="Description" class="form-control" disabled>@blog.Description</textarea>
+                                    </div>
+                                    <div class="form-group mt-4">
+                                        <div class="row">
+                                            <div class="col">
+                                                <button id="adminPills" class="badge bg-danger border-0" type="submit">Delete</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- Modal Footer -->
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-sm btn-dark" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             }
         </div>

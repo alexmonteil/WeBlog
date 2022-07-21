@@ -198,25 +198,6 @@ namespace WeBlog.Controllers
             return View(blog);
         }
 
-        // GET: Blogs/Delete/5
-        [Authorize(Roles = "Administrator")]
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null || _context.Blogs == null)
-            {
-                return NotFound();
-            }
-
-            var blog = await _context.Blogs
-                .Include(b => b.BlogUser)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (blog == null)
-            {
-                return NotFound();
-            }
-
-            return View(blog);
-        }
 
         // POST: Blogs/Delete/5
         [HttpPost, ActionName("Delete")]
@@ -235,7 +216,7 @@ namespace WeBlog.Controllers
             }
             
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", "Home");
         }
 
         private bool BlogExists(int id)
