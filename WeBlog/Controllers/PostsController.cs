@@ -384,14 +384,16 @@ namespace WeBlog.Controllers
             {
                 return Problem("Entity set 'ApplicationDbContext.Posts'  is null.");
             }
+
             var post = await _context.Posts.FindAsync(id);
+
             if (post != null)
             {
                 _context.Posts.Remove(post);
             }
             
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("BlogPostIndex", "Posts", new { id = post.BlogId });
         }
 
         private bool PostExists(int id)
