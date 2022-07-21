@@ -11,19 +11,7 @@
         <div class="col-lg-8 col-md-10 mx-auto">
             <form asp-action="Create" enctype="multipart/form-data">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-                @if (Model.BlogId > 0)
-                {
-                    <input type="hidden" asp-for="BlogId" />
-                }
-                else
-                {
-                    <div class="form-group">
-                        <label asp-for="BlogId" class="control-label"></label>
-                        <select asp-for="BlogId" class="form-control" asp-items="ViewBag.BlogId"></select>
-                    </div>
-                }
-                
+                <input type="hidden" asp-for="BlogId" />       
                 <div class="form-group mt-4">
                     <label asp-for="Title" class="control-label"></label>
                     <input asp-for="Title" class="form-control" required />

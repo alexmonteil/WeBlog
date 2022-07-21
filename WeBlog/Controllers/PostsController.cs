@@ -131,27 +131,13 @@ namespace WeBlog.Controllers
 
         // GET: Posts/Create
         [Authorize(Roles = "Administrator")]
-        public async Task<IActionResult> Create(int? blogId)
+        public async Task<IActionResult> Create(int blogId)
         {
 
-            var post = new Post();
-
-            if (blogId is null)
-            {
-                var defaultImage = await _imageService.EncodeImageAsync(_configuration["DefaultPostImage"]);
-                var defaultContentType = _configuration["DefaultPostImage"].Split(".")[1];
-
-                ViewData["HeaderImage"] = _imageService.DecodeImage(defaultImage, defaultContentType);
-                ViewData["BlogId"] = new SelectList(_context.Blogs, "Id", "Name");
-            }
-            else
-            {
-                var blog = await _context.Blogs.FindAsync(blogId);
-                post.BlogId = (int)blogId;
-                ViewData["HeaderImage"] = _imageService.DecodeImage(blog.ImageData, blog.ContentType);
-                
-            }
-
+            var post = new Post();            
+            var blog = await _context.Blogs.FindAsync(blogId);
+            post.BlogId = (int)blogId;
+            ViewData["HeaderImage"] = _imageService.DecodeImage(blog.ImageData, blog.ContentType);
             ViewData["MainText"] = "Create Post";
             ViewData["SubText"] = "Sharing ideas with the world";
 
