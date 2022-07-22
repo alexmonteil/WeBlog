@@ -88,9 +88,9 @@ namespace WeBlog.Controllers
             return View();
         }
 
+
         // POST: Blogs/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Administrator")]
@@ -100,8 +100,50 @@ namespace WeBlog.Controllers
             {
                 blog.Created = DateTime.UtcNow;
                 blog.BlogUserId = _userManager.GetUserId(User);
-                blog.ImageData = (await _imageService.EncodeImageAsync(blog.Image)) ?? (await _imageService.EncodeImageAsync(_configuration["DefaultBlogImage"]));
-                blog.ContentType = (_imageService.ContentType(blog.Image)) ?? (_configuration["DefaultBlogImage"].Split(".")[1]);
+                blog.ImageData = await _imageService.EncodeImageAsync(blog.Image);
+                blog.ContentType = _imageService.ContentType(blog.Image);
+                _context.Add(blog);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index", "Home");
+            }
+
+            var defaultImage = await _imageService.EncodeImageAsync(_configuration["DefaultBlogImage"]);
+            var defaultContentType = _configuration["DefaultBlogImage"].Split(".")[1];
+            ViewData["HeaderImage"] = _imageService.DecodeImage(defaultImage, defaultContentType);
+            ViewData["MainText"] = "Create Blog";
+            ViewData["SubText"] = "Add content to people's lives";
+
+            return View(blog);
+        }
+
+
+        // GET: Blogs/CreateFromIndex
+        [Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> CreateFromIndex()
+        {
+            var defaultImage = await _imageService.EncodeImageAsync(_configuration["DefaultBlogImage"]);
+            var defaultContentType = _configuration["DefaultBlogImage"].Split(".")[1];
+
+            ViewData["HeaderImage"] = _imageService.DecodeImage(defaultImage, defaultContentType);
+            ViewData["MainText"] = "Create Blog";
+            ViewData["SubText"] = "Add content to people's lives";
+
+            return View();
+        }
+
+        // POST: Blogs/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> CreateFromIndex([Bind("Name,Description,Image")] Blog blog)
+        {
+            if (ModelState.IsValid)
+            {
+                blog.Created = DateTime.UtcNow;
+                blog.BlogUserId = _userManager.GetUserId(User);
+                blog.ImageData = await _imageService.EncodeImageAsync(blog.Image);
+                blog.ContentType = _imageService.ContentType(blog.Image);
                 _context.Add(blog);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -150,11 +192,10 @@ namespace WeBlog.Controllers
 
         // POST: Blogs/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Administrator")]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Created,Image,ImageData,ContentType")] Blog blog)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,BlogUserId,Name,Description,Created,Image,ImageData,ContentType")] Blog blog)
         {
             if (id != blog.Id)
             {
@@ -171,6 +212,91 @@ namespace WeBlog.Controllers
 
                 try
                 {
+                    blog.Created = blog.Created.ToUniversalTime();
+                    blog.Updated = DateTime.UtcNow;
+                    _context.Update(blog);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!BlogExists(blog.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction("Index", "Home");
+            }
+
+            var defaultImage = await _imageService.EncodeImageAsync(_configuration["DefaultBlogImage"]);
+            var defaultContentType = _configuration["DefaultBlogImage"].Split(".")[1];
+            ViewData["HeaderImage"] = _imageService.DecodeImage(defaultImage, defaultContentType);
+            ViewData["MainText"] = "Edit Blog";
+            ViewData["SubText"] = "Change the content you are sharing";
+
+            return View(blog);
+        }
+
+
+        // GET: Blogs/EditFromIndex/
+        [Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> EditFromIndex(int? id)
+        {
+            if (id == null || _context.Blogs == null)
+            {
+                return NotFound();
+            }
+
+            var blog = await _context.Blogs.FindAsync(id);
+            if (blog == null)
+            {
+                return NotFound();
+            }
+
+            if (blog.ImageData is not null)
+            {
+                ViewData["HeaderImage"] = _imageService.DecodeImage(blog.ImageData, blog.ContentType);
+            }
+            else
+            {
+                var defaultImage = await _imageService.EncodeImageAsync(_configuration["DefaultBlogImage"]);
+                var defaultContentType = _configuration["DefaultBlogImage"].Split(".")[1];
+                ViewData["HeaderImage"] = _imageService.DecodeImage(defaultImage, defaultContentType);
+            }
+
+            ViewData["MainText"] = "Edit Blog";
+            ViewData["SubText"] = "Change the content you are sharing";
+
+            return View(blog);
+        }
+
+
+        // POST: Blogs/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> EditFromIndex(int id, [Bind("Id,BlogUserId,Name,Description,Created,Image,ImageData,ContentType")] Blog blog)
+        {
+            if (id != blog.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                if (blog.Image != null)
+                {
+                    blog.ImageData = await _imageService.EncodeImageAsync(blog.Image);
+                    blog.ContentType = _imageService.ContentType(blog.Image);
+                }
+
+                try
+                {
+                    blog.Created = blog.Created.ToUniversalTime();
                     blog.Updated = DateTime.UtcNow;
                     _context.Update(blog);
                     await _context.SaveChangesAsync();

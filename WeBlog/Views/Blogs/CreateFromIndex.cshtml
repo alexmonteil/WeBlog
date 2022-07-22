@@ -1,27 +1,23 @@
 ﻿@model WeBlog.Models.Blog
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Create from index";
 }
+
 
 <div class="container px-4 px-lg-5">
     <div class="row gx-4 gx-lg-5 justify-content-center">
         <div class="col-lg-8 col-md-10 mx-auto">
-            <form asp-controller="Blogs" asp-action="Edit" enctype="multipart/form-data">
+            <form asp-action="CreateFromIndex" enctype="multipart/form-data">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <input type="hidden" asp-for="Id" />
-                <input type="hidden" asp-for="BlogUserId" />
-                <input type="hidden" asp-for="Created" />
-                <input type="hidden" asp-for="ImageData" />
-                <input type="hidden" asp-for="ContentType" />
                 <div class="form-group">
                     <label asp-for="Name" class="control-label"></label>
-                    <input asp-for="Name" class="form-control" />
+                    <input asp-for="Name" class="form-control" required />
                     <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
                 <div class="form-group mt-4">
                     <label asp-for="Description" class="control-label"></label>
-                    <textarea asp-for="Description" class="form-control"></textarea>
+                    <textarea asp-for="Description" class="form-control" required></textarea>
                     <span asp-validation-for="Description" class="text-danger"></span>
                 </div>
                 <div class="form-group mt-4">
@@ -30,7 +26,7 @@
                     <span asp-validation-for="Image" class="text-danger"></span>
                 </div>
                 <div class="form-group mt-4">
-                    <input type="submit" value="Save" class="btn btn-sm btn-primary" />
+                    <input type="submit" value="Create" class="btn btn-primary btn-sm" />
                 </div>
             </form>
         </div>
@@ -40,7 +36,7 @@
 <div class="container px-4 px-lg-5 mt-4">
     <div class="row gx-4 gx-lg-5">
         <div class="col-lg-8 col-md-10 mx-auto">
-            <a id="adminPills" class="badge bg-dark text-decoration-none" asp-controller="Home" asp-action="Index">Back to List</a>
+            <a id="adminPills" class="badge bg-dark text-decoration-none" asp-action="Index">Back to List</a>
         </div>
     </div>
 </div>
@@ -48,3 +44,4 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
+
