@@ -35,6 +35,12 @@
                         {
                             <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="Blogs" asp-action="Index">Manage Blogs</a></li> 
                             <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="Posts" asp-action="Index">Manage Posts</a></li>
+                            <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="Comments" asp-action="Index">Manage Comments</a></li>
+                        }
+                        else if (User.IsInRole("Moderator"))
+                        {
+                            <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" asp-controller="Comments" asp-action="Index">Manage Comments</a></li>
+
                         }
                     </ul>
                     <partial name="_LoginPartial" />
