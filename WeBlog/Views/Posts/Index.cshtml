@@ -42,7 +42,7 @@
                     <img class="img-fluid" width="200" src="@imageService.DecodeImage(item.ImageData, item.ContentType)" />
                 </td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="EditFromIndex" asp-route-id="@item.Id">Edit</a> |
                     <a asp-action="Details" asp-route-slug="@item.Slug">Details</a> |
                     <button id="adminPills" type="button" class="badge bg-danger border-0" data-bs-toggle="modal" data-bs-target="#deleteModal_@item.Id">Delete</button>
                 </td>

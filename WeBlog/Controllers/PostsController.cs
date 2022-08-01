@@ -438,6 +438,141 @@ namespace WeBlog.Controllers
             return View(post);
         }
 
+        // GET: Posts/EditFromIndex/5
+        [Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> EditFromIndex(int? id)
+        {
+            if (id == null || _context.Posts == null)
+            {
+                return NotFound();
+            }
+
+            var post = await _context.Posts.Include(p => p.Tags).FirstOrDefaultAsync(p => p.Id == id);
+            if (post == null)
+            {
+                return NotFound();
+            }
+
+            if (post.ImageData is not null)
+            {
+                ViewData["HeaderImage"] = _imageService.DecodeImage(post.ImageData, post.ContentType);
+            }
+            else
+            {
+                var defaultImage = await _imageService.EncodeImageAsync(_configuration["DefaultPostImage"]);
+                var defaultContentType = _configuration["DefaultPostImage"].Split(".")[1];
+                ViewData["HeaderImage"] = _imageService.DecodeImage(defaultImage, defaultContentType);
+            }
+
+            ViewData["MainText"] = "Edit Post";
+            ViewData["SubText"] = "Change the content to match your thoughts";
+            ViewData["BlogId"] = new SelectList(_context.Blogs, "Id", "Name", post.BlogId);
+            ViewData["TagValues"] = string.Join(",", post.Tags.Select(t => t.Text));
+            return View(post);
+        }
+
+        // POST: Posts/EditFromIndex/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrator")]
+        public async Task<IActionResult> EditFromIndex(int id, [Bind("Id,BlogId,Title,Abstract,Content,ReadyStatus,Image")] Post post, List<string> tagValues)
+        {
+            if (id != post.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+
+                try
+                {
+                    var newPost = await _context.Posts.Include(p => p.Tags).FirstOrDefaultAsync(p => p.Id == id);
+                    newPost.Updated = DateTime.UtcNow;
+                    newPost.Title = post.Title;
+                    newPost.Abstract = post.Abstract;
+                    newPost.Content = post.Content;
+                    newPost.ReadyStatus = post.ReadyStatus;
+
+                    var newSlug = _slugService.UrlFriendly(post.Title);
+                    bool validationError = false;
+
+                    // Check for slug change
+                    if (newSlug != newPost.Slug)
+                    {
+                        // Detect null or empty slug
+                        if (string.IsNullOrEmpty(newSlug))
+                        {
+                            ModelState.AddModelError("", "The title you provided cannot be used as it results in an empty slug");
+                            validationError = true;
+                        }
+
+                        // Detect duplicate slug
+                        if (!_slugService.IsUnique(newSlug))
+                        {
+                            ModelState.AddModelError("Title", "The title you provided cannot be used as it results in a duplicate slug");
+                            validationError = true;
+                        }
+
+                        // if validation errors exist, return necessary data to the view
+                        if (validationError)
+                        {
+                            ViewData["TagValues"] = string.Join(",", tagValues);
+                            return View(post);
+                        }
+
+                        newPost.Title = post.Title;
+                        newPost.Slug = newSlug;
+                    }
+
+                    if (post.Image is not null)
+                    {
+                        newPost.ImageData = await _imageService.EncodeImageAsync(post.Image);
+                        newPost.ContentType = _imageService.ContentType(post.Image);
+                    }
+
+                    // Remove all tags previously associated with this post
+                    _context.Tags.RemoveRange(newPost.Tags);
+
+                    // Add the new tags from the edit form
+                    foreach (var tagText in tagValues)
+                    {
+                        _context.Add(new Tag()
+                        {
+                            PostId = post.Id,
+                            BlogUserId = newPost.BlogUserId,
+                            Text = tagText
+                        });
+                    }
+
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!PostExists(post.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction("Index", "Posts");
+            }
+
+            var defaultImage = await _imageService.EncodeImageAsync(_configuration["DefaultPostImage"]);
+            var defaultContentType = _configuration["DefaultPostImage"].Split(".")[1];
+
+            ViewData["HeaderImage"] = _imageService.DecodeImage(defaultImage, defaultContentType);
+            ViewData["MainText"] = "Edit Post";
+            ViewData["SubText"] = "Change the content to match your thoughts";
+            ViewData["BlogId"] = new SelectList(_context.Blogs, "Id", "Description", post.BlogId);
+
+            return View(post);
+        }
+
 
         // POST: Posts/Delete/5
         [HttpPost, ActionName("Delete")]

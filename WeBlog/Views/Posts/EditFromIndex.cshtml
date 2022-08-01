@@ -1,0 +1,110 @@
+﻿
+@using WeBlog.Enums
+@model WeBlog.Models.Post
+
+@{
+    ViewData["Title"] = "Edit post from index";
+}
+
+<div class="container px-4 px-lg-5">
+    <div class="row gx-4 gx-lg-5 justify-content-center">
+        <div class="col-lg-8 col-md-10 mx-auto">
+            <form asp-action="EditFromIndex" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <input type="hidden" asp-for="Id" />
+                <div class="form-group">
+                    <label asp-for="BlogId" class="control-label"></label>
+                    <select asp-for="BlogId" class="form-control" asp-items="ViewBag.BlogId"></select>
+                    <span asp-validation-for="BlogId" class="text-danger"></span>
+                </div>
+                <div class="form-group mt-4">
+                    <label asp-for="Title" class="control-label"></label>
+                    <input asp-for="Title" class="form-control" />
+                    <span asp-validation-for="Title" class="text-danger"></span>
+                </div>
+                <div class="form-group mt-4">
+                    <label asp-for="Abstract" class="control-label"></label>
+                    <textarea asp-for="Abstract" class="form-control"></textarea>
+                    <span asp-validation-for="Abstract" class="text-danger"></span>
+                </div>
+                <div class="form-group mt-4">
+                    <label asp-for="Content" class="control-label"></label>
+                    <textarea asp-for="Content" class="form-control"></textarea>
+                    <span asp-validation-for="Content" class="text-danger"></span>
+                </div>
+                <div class="form-group mt-4">
+                    <div class="row">
+                        <div class="col">
+                            <label class="control-label">Manage Tags</label>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="row mb-2">
+                                <div class="col">
+                                    <input type="text" class="form-control" id="TagEntry" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="d-grid gap-2">
+                                        <button onclick="AddTag()" name="Add" type="button" class="btn btn-dark btn-sm">Add</button>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="d-grid gap-2">
+                                        <button onclick="DeleteTag()" name="Delete" type="button" class="btn btn-dark btn-sm">Delete</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col">
+                           <select class="w-100" name="TagValues" id="TagList" multiple></select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group mt-4">
+                    <label asp-for="Image" class="control-label"></label>
+                    <input type="file" asp-for="Image" class="form-control" />
+                    <span asp-validation-for="Image" class="text-danger"></span>
+                </div>
+                <div class="form-group mt-4">
+                    <label asp-for="ReadyStatus" class="control-label"></label>
+                    <select asp-for="ReadyStatus" asp-items="@Html.GetEnumSelectList<ReadyStatus>()" class="form-control"></select>
+                    <span asp-validation-for="ReadyStatus" class="text-danger"></span>
+                </div>
+                <div class="form-group mt-4">
+                    <input type="submit" value="Save" class="btn btn-sm btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="container px-4 px-lg-5 mt-4">
+    <div class="row gx-4 gx-lg-5">
+        <div class="col-lg-8 col-md-10 mx-auto">
+            <a id="adminPills" class="badge bg-dark text-decoration-none" asp-controller="Posts" asp-action="Index">Back to List</a>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+
+    <!-- Summernote JS -->
+    <script type="text/javascript" src="~/js/summernote-lite.min.js"></script>
+    <script>
+
+        const tagValues = '@ViewData["TagValues"]';
+        //Default font size but not for placeholder...
+        $('#Content').summernote({
+            placeholder: "Post content"
+        });
+    </script>
+    <script src="~/js/custom.js" type="text/javascript"></script>
+}
+
+@section Head {
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+}
