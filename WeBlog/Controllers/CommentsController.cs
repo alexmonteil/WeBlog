@@ -23,32 +23,20 @@ namespace WeBlog.Controllers
 
         // GET: non-moderated Comments
         [Authorize(Roles = "Administrator, Moderator")]
-        public async Task<IActionResult> OriginalIndex()
+        public async Task<IActionResult> Index()
         {
-            var originalComments = await _context.Comments.ToListAsync();
-            return View("Index", originalComments);
-        }
+            var comments = await _context.Comments
+                                    .Include(c => c.BlogUser)
+                                    .Include(c => c.Moderator)
+                                    .Include(c => c.Post)
+                                    .ToListAsync();
 
-        // GET: moderated Comments
-        [Authorize(Roles = "Administrator, Moderator")]
-        public async Task<IActionResult> ModeratedIndex()
-        {
-            var moderatedComments = await _context.Comments.Where(c => c.Moderated != null).ToListAsync();
-            return View("Index", moderatedComments);
-        }
-
-        // GET: deleted Comments
-        [Authorize(Roles = "Administrator, Moderator")]
-        public async Task<IActionResult> DeletedIndex()
-        {
-            var deletedComments = await _context.Comments.Where(c => c.Deleted != null).ToListAsync();
-            return View("Index", deletedComments);
+            return View("Index", comments);
         }
 
 
         // POST: Comments/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(string slug, [Bind("PostId,Body")] Comment comment)
@@ -95,7 +83,6 @@ namespace WeBlog.Controllers
 
         // POST: Comments/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Body")] Comment comment)
