@@ -1,38 +1,75 @@
 ﻿@page
 @model IndexModel
+
+@using WeBlog.Services.Interfaces
+@using Microsoft.Extensions.Configuration
+@inject IImageService _imageService
+@inject IConfiguration _configuration
+
 @{
     ViewData["Title"] = "Profile";
     ViewData["ActivePage"] = ManageNavPages.Index;
+
+    ViewData["MainText"] = "Your Account";
+    ViewData["SubText"] = "Manage Profile";
+
+    var DefaultImage = await _imageService.EncodeImageAsync(_configuration["DefaultHomePageImage"]);
+    var DefaultContentType = _configuration["DefaultHomePageImage"].Split('.')[1];
+    ViewData["HeaderImage"] = _imageService.DecodeImage(DefaultImage, DefaultContentType);
 }
 
-<h3>@ViewData["Title"]</h3>
-<partial name="_StatusMessage" for="StatusMessage" />
-<div class="row">
-    <div class="col-md-6">
+
+<div class="container px-4 px-lg-5">
+    <div class="row gx-4 gx-lg-5 justify-content-center">
+    <div class="col-lg-8 col-md-10 mx-auto">
+        <partial name="_StatusMessage" model="Model.StatusMessage" />
         <form id="profile-form" method="post" enctype="multipart/form-data">
+            <h4>@ViewData["Title"]</h4>
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-floating">
+
+            <div class="form-group mt-3">
+                <label asp-for="Username"></label>
                 <input asp-for="Username" class="form-control" disabled />
-                <label asp-for="Username" class="form-label"></label>
-            </div>
-            <div class="form-floating">
-                <input asp-for="Input.PhoneNumber" class="form-control" />
-                <label asp-for="Input.PhoneNumber" class="form-label"></label>
-                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
-            </div>
-            <div class="form-floating">
-                <input type="file" asp-for="Input.ImageFile" class="form-control" accept=".jpg,.png,.jpeg" />
-                <label asp-for="Input.ImageFile" class="form-label"></label>
-                <span asp-validation-for="Input.ImageFile" class="text-danger"></span>
             </div>
 
-            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
+            <div class="form-group mt-3">
+                <label asp-for="Input.FirstName"></label>
+                <input asp-for="Input.FirstName" class="form-control" />
+                <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-3">
+                <label asp-for="Input.LastName"></label>
+                <input asp-for="Input.LastName" class="form-control" />
+                <span asp-validation-for="Input.LastName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-3">
+                <label asp-for="Input.DisplayName"></label>
+                <input asp-for="Input.DisplayName" class="form-control" />
+                <span asp-validation-for="Input.DisplayName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-3">
+                <label asp-for="Input.PhoneNumber"></label>
+                <input asp-for="Input.PhoneNumber" class="form-control" />
+                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-3">
+                <label asp-for="Input.NewImage"></label>
+                <input type="file" asp-for="Input.NewImage" class="form-control" />
+                <span asp-validation-for="Input.NewImage" class="text-danger"></span>
+            </div>
+
+
+            <button id="update-profile-button" type="submit" class="btn btn-primary rounded mt-3">Save</button>
         </form>
     </div>
-    <div class="col-md-6 text-center">
-        <p>Current Avatar:</p>
-        <img src="@Model.CurrentImage" class="img-fluid rounded-circle w-50" />
+    <div class="col">
+        <img src="@Model.CurrentImage" class="img-fluid" id="profileImg" alt="User Profile Picture" />
     </div>
+</div>
 </div>
 
 @section Scripts {

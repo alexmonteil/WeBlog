@@ -2,10 +2,7 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
-using System;
 using System.ComponentModel.DataAnnotations;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
@@ -58,17 +55,24 @@ namespace WeBlog.Areas.Identity.Pages.Account.Manage
         /// </summary>
         public class InputModel
         {
-            /// <summary>
-            ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-            ///     directly from your code. This API may change or be removed in future releases.
-            /// </summary>
+            [Display(Name = "Display Name")]
+            [StringLength(50, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 2)]
+            public string DisplayName { get; set; }
 
-            [Display(Name = "Custom Avatar")]
-            public IFormFile ImageFile { get; set; }
+            [Display(Name = "First Name")]
+            [StringLength(50, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 2)]
+            public string FirstName { get; set; }
+
+            [Display(Name = "Last Name")]
+            [StringLength(50, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 2)]
+            public string LastName { get; set; }
 
             [Phone]
-            [Display(Name = "Phone number")]
+            [Display(Name = "Phone Number")]
             public string PhoneNumber { get; set; }
+
+            [Display(Name = "Profile Image")]
+            public IFormFile NewImage { get; set; }
         }
 
         private async Task LoadAsync(BlogUser user)
@@ -81,6 +85,9 @@ namespace WeBlog.Areas.Identity.Pages.Account.Manage
 
             Input = new InputModel
             {
+                DisplayName = user.DisplayName,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
                 PhoneNumber = phoneNumber
             };
         }
@@ -122,14 +129,45 @@ namespace WeBlog.Areas.Identity.Pages.Account.Manage
                 }
             }
 
-            // if the user selected a new image, update it in their profile
-            if (Input.ImageFile is not null)
+            bool hasChanged = false;
+
+            // Store display name
+            if (user.DisplayName != Input.DisplayName)
             {
-                user.ImageData = await _imageService.EncodeImageAsync(Input.ImageFile);
-                user.ContentType = _imageService.ContentType(Input.ImageFile);
-                await _userManager.UpdateAsync(user);
+                // Store the new name
+                user.DisplayName = Input.DisplayName;
+                hasChanged = true;
             }
 
+            // Store First Name
+            if (user.FirstName != Input.FirstName)
+            {
+                // Store the new name
+                user.FirstName = Input.FirstName;
+                hasChanged = true;
+            }
+
+            // Store Last Name
+            if (user.LastName != Input.LastName)
+            {
+                // Store the new name
+                user.LastName = Input.LastName;
+                hasChanged = true;
+            }
+
+            // if the user selected a new image, update it in their profile
+            if (Input.NewImage is not null)
+            {
+                user.ImageData = await _imageService.EncodeImageAsync(Input.NewImage);
+                user.ContentType = _imageService.ContentType(Input.NewImage);
+                hasChanged = true;
+            }
+
+            if (hasChanged)
+            {
+                await _userManager.UpdateAsync(user);
+            }
+            
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your profile has been updated";
             return RedirectToPage();
