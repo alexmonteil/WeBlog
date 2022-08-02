@@ -17,3 +17,9 @@
     width: auto;
     object-fit: cover;
 }
+
+#hero-picture {
+
+    max-height: 30vh;
+     
+}
