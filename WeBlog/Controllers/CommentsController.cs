@@ -21,20 +21,6 @@ namespace WeBlog.Controllers
         }
 
 
-        // GET: non-moderated Comments
-        [Authorize(Roles = "Administrator, Moderator")]
-        public async Task<IActionResult> Index()
-        {
-            var comments = await _context.Comments
-                                    .Include(c => c.BlogUser)
-                                    .Include(c => c.Moderator)
-                                    .Include(c => c.Post)
-                                    .ToListAsync();
-
-            return View("Index", comments);
-        }
-
-
         // POST: Comments/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         [HttpPost]
@@ -62,24 +48,6 @@ namespace WeBlog.Controllers
             return View(comment);
         }
 
-        // GET: Comments/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null || _context.Comments == null)
-            {
-                return NotFound();
-            }
-
-            var comment = await _context.Comments.FindAsync(id);
-            if (comment == null)
-            {
-                return NotFound();
-            }
-            ViewData["BlogUserId"] = new SelectList(_context.Users, "Id", "Id", comment.BlogUserId);
-            ViewData["ModeratorId"] = new SelectList(_context.Users, "Id", "Id", comment.ModeratorId);
-            ViewData["PostId"] = new SelectList(_context.Posts, "Id", "Abstract", comment.PostId);
-            return View(comment);
-        }
 
         // POST: Comments/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -116,7 +84,7 @@ namespace WeBlog.Controllers
                 return RedirectToAction("Details", "Posts", new { slug = newComment.Post.Slug }, "commentSection");
             }
 
-            return View(comment);
+            return RedirectToAction("Details", "Posts", new { slug = comment.Post.Slug }, "commentSection");
         }
 
         [Authorize(Roles = "Administrator, Moderator")]
@@ -154,7 +122,7 @@ namespace WeBlog.Controllers
                 return RedirectToAction("Details", "Posts", new { slug = newComment.Post.Slug }, "commentSection");
             }
 
-            return View(comment);
+            return RedirectToAction("Details", "Posts", new { slug = comment.Post.Slug }, "commentSection");
         }
 
         // GET: Comments/Delete/5
