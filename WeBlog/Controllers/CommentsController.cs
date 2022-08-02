@@ -44,8 +44,8 @@ namespace WeBlog.Controllers
 
                 return RedirectToAction("Details", "Posts", new { slug }, "commentSection");
             }
-            
-            return View(comment);
+
+            return RedirectToAction("Details", "Posts", new { slug }, "commentSection");
         }
 
 
@@ -125,26 +125,28 @@ namespace WeBlog.Controllers
             return RedirectToAction("Details", "Posts", new { slug = comment.Post.Slug }, "commentSection");
         }
 
-        // GET: Comments/Delete/5
+        // POST: Comments/Unmoderate/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         [Authorize(Roles = "Administrator, Moderator")]
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Unmoderate(int id, string slug)
         {
-            if (id == null || _context.Comments == null)
+            if (_context.Comments == null)
             {
-                return NotFound();
+                return Problem("Entity set 'ApplicationDbContext.Comments'  is null.");
             }
 
-            var comment = await _context.Comments
-                .Include(c => c.BlogUser)
-                .Include(c => c.Moderator)
-                .Include(c => c.Post)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (comment == null)
+            var comment = await _context.Comments.FindAsync(id);
+            if (comment is not null)
             {
-                return NotFound();
+                comment.Moderated = null;
+                comment.ModeratedBody = null;
+                comment.ModeratorId = null;
+
+                await _context.SaveChangesAsync();
             }
 
-            return View(comment);
+            return RedirectToAction("Details", "Posts", new { slug }, "commentSection");
         }
 
         // POST: Comments/Delete/5
@@ -158,7 +160,7 @@ namespace WeBlog.Controllers
                 return Problem("Entity set 'ApplicationDbContext.Comments'  is null.");
             }
             var comment = await _context.Comments.FindAsync(id);
-            if (comment != null)
+            if (comment is not null)
             {
                 _context.Comments.Remove(comment);
             }

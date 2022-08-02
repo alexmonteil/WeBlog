@@ -189,7 +189,7 @@
 
                         @if(comment.Moderated is not null && (User.IsInRole(BlogRole.Administrator.ToString()) || User.IsInRole(BlogRole.Moderator.ToString())))
                         {
-                            <form asp-controller="Comments" asp-action="Unmoderate">
+                            <form asp-controller="Comments" asp-action="Unmoderate" method="POST">
                                 @Html.Hidden("Id", comment.Id)
                                 @Html.Hidden("Slug", Model.Slug)
                                 <div>
@@ -211,7 +211,7 @@
                                     </div>
                                 </div>
                                 <div class="col-2 col-xs-5 ms-5">
-                                    <form asp-controller="Comments" asp-action="Delete">
+                                    <form asp-controller="Comments" asp-action="Delete" method="POST">
                                         @Html.Hidden("Id", comment.Id)
                                         @Html.Hidden("Slug", Model.Slug)
                                         <div class="d-grid gap-2">
