@@ -10,9 +10,6 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Body)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.Created)
             </th>
             <th>
@@ -23,9 +20,6 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Deleted)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ModeratedBody)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.ModerationType)
@@ -39,7 +33,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.Moderator)
             </th>
-            <th></th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
@@ -47,22 +41,23 @@
 {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Body)
+                @item.Created.ToShortDateString()
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Created)
+                @if (item.Updated.HasValue)
+                {
+                    item.Updated.Value.ToShortDateString();        
+                }
+                else
+                {
+                    <text>N/A</text>   
+                }
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Updated)
+                N/A
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Moderated)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Deleted)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ModeratedBody)
+                N/A
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.ModerationType)
@@ -71,10 +66,10 @@
                 @Html.DisplayFor(modelItem => item.Post.Abstract)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.BlogUser.Id)
+                @Html.DisplayFor(modelItem => item.BlogUser.DisplayName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Moderator.Id)
+                @Html.DisplayFor(modelItem => item.Moderator.DisplayName)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
@@ -95,9 +90,6 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Body)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.Created)
             </th>
             <th>
@@ -108,9 +100,6 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Deleted)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ModeratedBody)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.ModerationType)
@@ -124,7 +113,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.Moderator)
             </th>
-            <th></th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
@@ -132,22 +121,23 @@
 {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Body)
+                @item.Created.ToShortDateString()
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Created)
+                @if (item.Updated.HasValue)
+                {
+                    item.Updated.Value.ToShortDateString();     
+                }
+                else
+                {
+                    <text>N/A</text>  
+                }
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Updated)
+                @item.Moderated.Value.ToShortDateString()
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Moderated)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Deleted)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ModeratedBody)
+                N/A
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.ModerationType)
@@ -156,10 +146,10 @@
                 @Html.DisplayFor(modelItem => item.Post.Abstract)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.BlogUser.Id)
+                @Html.DisplayFor(modelItem => item.BlogUser.DisplayName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Moderator.Id)
+                @Html.DisplayFor(modelItem => item.Moderator.DisplayName)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
@@ -180,9 +170,6 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Body)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.Created)
             </th>
             <th>
@@ -193,9 +180,6 @@
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Deleted)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ModeratedBody)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.ModerationType)
@@ -209,7 +193,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.Moderator)
             </th>
-            <th></th>
+            <th>Action</th>
         </tr>
     </thead>
     <tbody>
@@ -217,22 +201,30 @@
 {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.Body)
+                @item.Created.ToShortDateString()
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Created)
+                @if (item.Updated.HasValue)
+                {
+                    item.Updated.Value.ToShortDateString();   
+                }
+                else
+                {
+                    <text>N/A</text>   
+                }
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Updated)
+                @if (item.Moderated.HasValue) 
+                {
+                    item.Moderated.Value.ToShortDateString();
+                }
+                else
+                {
+                    <text>N/A</text>  
+                }
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Moderated)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Deleted)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ModeratedBody)
+                @item.Deleted.Value.ToShortDateString()
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.ModerationType)
@@ -241,10 +233,10 @@
                 @Html.DisplayFor(modelItem => item.Post.Abstract)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.BlogUser.Id)
+                @Html.DisplayFor(modelItem => item.BlogUser.DisplayName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Moderator.Id)
+                @Html.DisplayFor(modelItem => item.Moderator.DisplayName)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
