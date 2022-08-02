@@ -19,7 +19,21 @@
 }
 
 #hero-picture {
-
     max-height: 30vh;
-     
+}
+
+
+#customLink {
+    color: #0085A1;
+    text-decoration: none;
+}
+
+
+#customLink:hover {
+    color: #00bfe6;
+}
+
+
+#customLink:active {
+    color: #00bfe6;
 }
