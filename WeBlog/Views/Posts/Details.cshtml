@@ -184,8 +184,22 @@
                                 <button id="adminPills" data-bs-toggle="modal" data-bs-target="#editModal_@comment.Id" class="badge bg-success float-end fw-bold border-0">Edit</button>
                             </div>
                         }
-                    
-                        @* SECTION 5 : Can we render the moderate and delete buttons ? *@
+
+                        @* SECTION 5 : Can we render the unmoderate button ? *@
+
+                        @if(comment.Moderated is not null && (User.IsInRole(BlogRole.Administrator.ToString()) || User.IsInRole(BlogRole.Moderator.ToString())))
+                        {
+                            <form asp-controller="Comments" asp-action="Unmoderate">
+                                @Html.Hidden("Id", comment.Id)
+                                @Html.Hidden("Slug", Model.Slug)
+                                <div>
+                                    <button id="adminPills" type="submit" class="badge bg-success float-end fw-bold border-0">Unmoderate</button>
+                                </div>
+                            </form>
+                            
+                        }
+
+                        @* SECTION 6 : Can we render the moderate and delete buttons ? *@
 
                         @if((User.IsInRole(BlogRole.Moderator.ToString()) || User.IsInRole(BlogRole.Administrator.ToString())) && comment.Deleted is null)
                         {
