@@ -118,7 +118,14 @@
         <div class="row mt-2 gx-4 gx-lg-5">
             <div class="col">
                 <div class="media media-border p-2 mb-3 bg-light shadow-sm">
-                    <img class="align-self-start me-3 rounded-circle img-fluid" style="width: 60px;" src="@imageService.DecodeImage(comment.BlogUser.ImageData, comment.BlogUser.ContentType)" />
+                    @if(comment.BlogUser.ImageData is not null)
+                    {
+                        <img class="align-self-start me-3 rounded-circle img-fluid" style="width: 60px;" src="@imageService.DecodeImage(comment.BlogUser.ImageData, comment.BlogUser.ContentType)" />
+                    } 
+                    else
+                    {
+                        <img class="align-self-start me-3 rounded-circle img-fluid" style="width: 60px;" src="~/images/defaultUserImage.jpg" />
+                    }
                     <div class="media-body">
                         <h6 class="mt-2 fw-bold">@comment.BlogUser.DisplayName</h6>
 
