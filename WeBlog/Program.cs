@@ -10,10 +10,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 
 // Add services to the container.
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
 // Register PostgreSQL db connection
+
+IConnectionService connectionService = new DefaultConnectionService();
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(connectionString));
+    options.UseNpgsql(connectionService.GetConnectionString(builder.Configuration)));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 // Register Identity class for authentication
@@ -23,6 +26,8 @@ builder.Services.AddIdentity<BlogUser, IdentityRole>(options => options.SignIn.R
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+
+// Add services to the container.
 
 // Register DataService 
 builder.Services.AddScoped<DataService>();
