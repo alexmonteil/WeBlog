@@ -20,4 +20,11 @@ window.addEventListener('DOMContentLoaded', () => {
         }
         scrollPos = currentTop;
     });
+
+    AutoInsertYear();
 })
+
+
+function AutoInsertYear() {
+    document.querySelector("#footerYear").textContent = `${new Date().getFullYear()}`;
+};
