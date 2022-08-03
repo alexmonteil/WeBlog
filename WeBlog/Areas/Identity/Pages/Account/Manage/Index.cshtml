@@ -13,9 +13,9 @@
     ViewData["MainText"] = "Your Account";
     ViewData["SubText"] = "Manage Profile";
 
-    var DefaultImage = await _imageService.EncodeImageAsync(_configuration["DefaultHomePageImage"]);
-    var DefaultContentType = _configuration["DefaultHomePageImage"].Split('.')[1];
-    ViewData["HeaderImage"] = _imageService.DecodeImage(DefaultImage, DefaultContentType);
+    var defaultImage = await _imageService.EncodeImageAsync(_configuration["DefaultHomePageImage"]);
+    var defaultContentType = _configuration["DefaultHomePageImage"].Split('.')[1];
+    ViewData["HeaderImage"] = _imageService.DecodeImage(defaultImage, defaultContentType);
 }
 
 
@@ -67,7 +67,15 @@
         </form>
     </div>
     <div class="col">
-        <img src="@Model.CurrentImage" class="img-fluid" id="profileImg" alt="User Profile Picture" />
+            @if(Model.CurrentImage is not null)
+            {
+                <img src="@Model.CurrentImage" class="img-fluid" id="profileImg" alt="User Profile Picture" />
+            }
+            else
+            {
+                <img src="~/images/defaultUserImage.jpg" class="img-fluid" id="profileImg" alt="User Profile Picture" />
+            }
+            
     </div>
 </div>
 </div>

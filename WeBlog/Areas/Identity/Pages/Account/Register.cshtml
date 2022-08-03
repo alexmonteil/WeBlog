@@ -13,9 +13,9 @@
     ViewData["MainText"] = "Register User";
     ViewData["SubText"] = "Join the party!";
 
-    var DefaultImage = await _imageService.EncodeImageAsync(_configuration["DefaultHomePageImage"]);
-    var DefaultContentType = _configuration["DefaultHomePageImage"].Split('.')[1];
-    ViewData["HeaderImage"] = _imageService.DecodeImage(DefaultImage, DefaultContentType);
+    var defaultImage = await _imageService.EncodeImageAsync(_configuration["DefaultHomePageImage"]);
+    var defaultContentType = _configuration["DefaultHomePageImage"].Split('.')[1];
+    ViewData["HeaderImage"] = _imageService.DecodeImage(defaultImage, defaultContentType);
 }
 
 <div class="container px-4 px-lg-5">
