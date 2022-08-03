@@ -57,34 +57,39 @@ namespace WeBlog.Services
                 return;
             }
 
+            var adminUserName = Environment.GetEnvironmentVariable("ADMIN_USERNAME") ?? "admin@weblog.com";
+            var adminPassword = Environment.GetEnvironmentVariable("ADMIN_PASSWORD") ?? "Adminpassword123!";
+
             // Otherwise, seed users.
             BlogUser adminUser = new BlogUser()
             {
-                Email = "alex.monteil@outlook.com",
-                UserName = "alex.monteil@outlook.com",
-                FirstName = "Alex",
-                LastName = "Monteil",
-                DisplayName = "The Administrator",
+                Email = "admin@weblog.com",
+                UserName =  adminUserName,
+                FirstName = "John",
+                LastName = "Doe",
+                DisplayName = "Admin",
                 PhoneNumber = "(612) 111-2222",
                 EmailConfirmed = true
             };
 
-            await _userManager.CreateAsync(adminUser, "Adminpassword123!");
-
+            await _userManager.CreateAsync(adminUser, adminPassword);
             await _userManager.AddToRoleAsync(adminUser, BlogRole.Administrator.ToString());
+
+            var modUserName = Environment.GetEnvironmentVariable("MOD_USERNAME") ?? "mod@weblog.com";
+            var modPassword = Environment.GetEnvironmentVariable("MOD_PASSWORD") ?? "Modpassword123!";
 
             BlogUser modUser = new BlogUser()
             {
                 Email = "moderator@weblog.com",
-                UserName = "moderator@weblog.com",
+                UserName = modUserName,
                 FirstName = "John",
                 LastName = "Doe",
-                DisplayName = "The Moderator",
+                DisplayName = "Moderator",
                 PhoneNumber = "(612) 111-3333",
                 EmailConfirmed = true
             };
 
-            await _userManager.CreateAsync(modUser, "Modpassword123!");
+            await _userManager.CreateAsync(modUser, modPassword);
             await _userManager.AddToRoleAsync(modUser, BlogRole.Moderator.ToString());
         }
     }
