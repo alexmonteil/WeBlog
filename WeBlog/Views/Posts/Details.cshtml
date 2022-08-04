@@ -29,11 +29,47 @@
                 asp-action="Edit"
                 asp-controller="Posts"
                 asp-route-id="@Model.Id">Edit Post</a>
+              
+                @* Calls Delete Post Modal *@
+                <button id="adminPills" type="button" class="badge bg-danger border-0" data-bs-toggle="modal" data-bs-target="#deletePostModal_@Model.Id">Delete Post</button>
+            </div>
+        </div>
+    </div>
 
-                <a id="adminPills" class="badge bg-danger text-decoration-none"
-                asp-action="Delete"
-                asp-controller="Posts"
-                asp-route-id="@Model.Id">Delete Post</a>
+    @* Delete Post Modal *@
+    <div class="modal" id="deletePostModal_@Model.Id">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Confirm deletion of Post...</h4>
+                </div>
+                <!-- Modal Body -->
+                <div class="modal-body">
+                    <form asp-controller="Posts" asp-action="Delete" method="POST">
+                        <input type="hidden" name="Id" for="Id" value="@Model.Id" />
+                        <div class="form-group">
+                            <label class="control-label">Post Title</label>
+                            <input name="Title" class="form-control" disabled style="resize: none;" value="@Model.Title"/>
+                        </div>
+                        <div class="form-group mt-4">
+                            <label class="control-label">Post Abstract</label>
+                            <input name="Abstract" class="form-control" disabled style="resize: none;" value="@Model.Abstract"/>
+                        </div>
+                        <div class="form-group mt-4">
+                            <div class="row">
+                                <div class="col">
+                                    <button id="adminPills" class="badge bg-danger border-0" type="submit">Delete</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Modal Footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-dark" data-bs-dismiss="modal">Close</button>
+                </div>
             </div>
         </div>
     </div>
@@ -41,10 +77,10 @@
 }
 
 <!-- Post Content-->
-<article class="mb-4">
+<article class="mt-4">
     <div class="container px-4 px-lg-5">
         <div class="row gx-4 gx-lg-5">
-            <div class="col-md-10 col-lg-8 col-xl-7">
+            <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
                 @Html.Raw(Model.Content)
             </div>
         </div>
@@ -54,7 +90,7 @@
 <hr />
 
 <article>
-    <div class="container px-4 px-lg-5">
+    <div class="container px-4 px-lg-5 mt-3">
         <div class="row gx-4 gx-lg-5">
             <div class="col text-center fw-bold h3">
                 Post Tags
@@ -76,7 +112,7 @@
 
 <hr />
 
-<div class="container px-4 px-lg-5">
+<div class="container px-4 px-lg-5 mt-3">
     <div class="row gx-4 gx-lg-5">
         <div class="col">
             <div class="mb-2 p-0">
@@ -218,13 +254,9 @@
                                     </div>
                                 </div>
                                 <div class="col-2 col-xs-5 ms-5">
-                                    <form asp-controller="Comments" asp-action="Delete" method="POST">
-                                        @Html.Hidden("Id", comment.Id)
-                                        @Html.Hidden("Slug", Model.Slug)
-                                        <div class="d-grid gap-2">
-                                            <button type="button" id="adminPills" class="badge bg-danger fw-bold border-0">Delete</button>
-                                        </div>
-                                    </form>
+                                    <div class="d-grid gap-2">
+                                        <button id="adminPills" type="button" class="badge bg-danger border-0" data-bs-toggle="modal" data-bs-target="#deleteModal_@comment.Id">Delete</button>
+                                    </div>
                                 </div>
                             </div>
                            
@@ -301,6 +333,41 @@
                     <!-- Modal Footer -->
                     <div class="modal-footer">
                         <button type="button" class="btn btn-sm btn-dark fw-bold" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @* Delete Modal *@
+        <div class="modal" id="deleteModal_@comment.Id">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">Confirm deletion of comment...</h4>
+                    </div>
+                    <!-- Modal Body -->
+                    <div class="modal-body">
+                        <form asp-controller="Comments" asp-action="Delete" method="POST">
+                            @Html.Hidden("Id", comment.Id)
+                            @Html.Hidden("Slug", Model.Slug)
+                            <div class="form-group">
+                                <label class="control-label">Comment Body</label>
+                                <input name="Body" class="form-control" disabled style="resize: none;" value="@comment.Body"/>
+                            </div>
+                            <div class="form-group mt-4">
+                                <div class="row">
+                                    <div class="col">
+                                        <button id="adminPills" class="badge bg-danger border-0" type="submit">Delete</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Modal Footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-sm btn-dark" data-bs-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
