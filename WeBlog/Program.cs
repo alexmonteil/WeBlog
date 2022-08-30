@@ -64,7 +64,6 @@ else
 var dataService = app.Services.CreateScope().ServiceProvider.GetRequiredService<DataService>();
 await dataService.ManageDataAsync();
 
-app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
