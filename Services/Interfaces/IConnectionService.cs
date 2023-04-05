@@ -2,7 +2,7 @@
 {
     public interface IConnectionService
     {
-        public string GetConnectionString(IConfiguration configuration);
-        public string BuildConnectionString(string databaseUrl);
+        string GetConnectionString(IConfiguration configuration);
+        string BuildConnectionString(string databaseUrl);
     }
 }
