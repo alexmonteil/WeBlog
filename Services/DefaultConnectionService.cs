@@ -8,7 +8,7 @@ namespace WeBlog.Services
         public string GetConnectionString(IConfiguration configuration)
         {
             //The default connection string will come from appSettings
-            var connectionString = configuration.GetConnectionString("DefaultConnection");
+            var connectionString = configuration.GetSection("pgSettings")["pgConnectionString"];
 
             //It will be automatically overwritten if running on Heroku
             var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");
