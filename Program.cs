@@ -49,6 +49,9 @@ builder.Services.AddScoped<ISlugService, DefaultSlugService>();
 
 var app = builder.Build();
 
+var dataService = app.Services.CreateScope().ServiceProvider.GetRequiredService<DataService>();
+await dataService.ManageDataAsync();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -61,8 +64,6 @@ else
     app.UseHsts();
 }
 
-var dataService = app.Services.CreateScope().ServiceProvider.GetRequiredService<DataService>();
-await dataService.ManageDataAsync();
 
 app.UseStaticFiles();
 
