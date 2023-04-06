@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <Nullable>enable</Nullable>
+    <!--<Nullable>enable</Nullable>-->
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>aspnet-WeBlog-7454B3F6-CF2E-430D-8439-435967BBA0E5</UserSecretsId>
 	<InvariantGlobalization>true</InvariantGlobalization>
