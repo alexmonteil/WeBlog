@@ -12,14 +12,28 @@ namespace WeBlog.Services
 
         public EmailService(IOptions<MailSettings> mailSettings)
         {
-            _mailSettings = mailSettings.Value;
+            if (mailSettings != null && mailSettings.Value != null)
+            {
+                _mailSettings = mailSettings.Value;
+            }
+            else
+            {
+                _mailSettings = new MailSettings
+                {
+                    MailAddress = Environment.GetEnvironmentVariable("MailAddress"),
+                    DisplayName = Environment.GetEnvironmentVariable("DisplayName"),
+                    MailPassword = Environment.GetEnvironmentVariable("MailPassword"),
+                    MailHost = Environment.GetEnvironmentVariable("MailHost"),
+                    MailPort = int.Parse(Environment.GetEnvironmentVariable("MailPort"))
+                };
+            }
         }
 
         public async Task SendContactEmailAsync(string emailFrom, string name, string subject, string htmlMessage)
         {
             var email = new MimeMessage();
-            email.Sender = MailboxAddress.Parse(_mailSettings.Mail);
-            email.To.Add(MailboxAddress.Parse(_mailSettings.Mail));
+            email.Sender = MailboxAddress.Parse(_mailSettings.MailAddress);
+            email.To.Add(MailboxAddress.Parse(_mailSettings.MailAddress));
             email.Subject = subject;
 
             var builder = new BodyBuilder();
@@ -28,8 +42,8 @@ namespace WeBlog.Services
             email.Body = builder.ToMessageBody();
 
             using var smtp = new SmtpClient();
-            smtp.Connect(_mailSettings.Host, _mailSettings.Port, MailKit.Security.SecureSocketOptions.StartTls);
-            smtp.Authenticate(_mailSettings.Mail, _mailSettings.Password);
+            smtp.Connect(_mailSettings.MailHost, _mailSettings.MailPort, MailKit.Security.SecureSocketOptions.StartTls);
+            smtp.Authenticate(_mailSettings.MailAddress, _mailSettings.MailPassword);
 
             await smtp.SendAsync(email);
 
@@ -39,7 +53,7 @@ namespace WeBlog.Services
         public async Task SendEmailAsync(string emailTo, string subject, string htmlMessage)
         {
             var email = new MimeMessage();
-            email.Sender = MailboxAddress.Parse(_mailSettings.Mail);
+            email.Sender = MailboxAddress.Parse(_mailSettings.MailAddress);
             email.To.Add(MailboxAddress.Parse(emailTo));
             email.Subject = subject;
 
@@ -50,8 +64,8 @@ namespace WeBlog.Services
 
             email.Body = builder.ToMessageBody();
             using var smtp = new SmtpClient();
-            smtp.Connect(_mailSettings.Host, _mailSettings.Port, MailKit.Security.SecureSocketOptions.StartTls);
-            smtp.Authenticate(_mailSettings.Mail, _mailSettings.Password);
+            smtp.Connect(_mailSettings.MailHost, _mailSettings.MailPort, MailKit.Security.SecureSocketOptions.StartTls);
+            smtp.Authenticate(_mailSettings.MailAddress, _mailSettings.MailPassword);
 
             await smtp.SendAsync(email);
             smtp.Disconnect(true);
