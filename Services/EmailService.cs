@@ -33,7 +33,7 @@ namespace WeBlog.Services
             try
             {
                 var host = _mailSettings.MailHost ?? Environment.GetEnvironmentVariable("MailHost");
-                var port = _mailSettings.MailPort == 0 ? int.Parse(Environment.GetEnvironmentVariable("MailPort")) : _mailSettings.MailPort;
+                var port = _mailSettings.MailPort == 0 ? int.Parse(Environment.GetEnvironmentVariable("MailPort")!) : _mailSettings.MailPort;
                 var password = _mailSettings.MailPassword ?? Environment.GetEnvironmentVariable("MailPassword");
                 smtp.Connect(host, port, MailKit.Security.SecureSocketOptions.StartTls);
                 smtp.Authenticate(emailSender, password);
@@ -67,7 +67,7 @@ namespace WeBlog.Services
             try
             {
                 var host = _mailSettings.MailHost ?? Environment.GetEnvironmentVariable("MailHost");
-                var port = _mailSettings.MailPort == 0 ? int.Parse(Environment.GetEnvironmentVariable("MailPort")) : _mailSettings.MailPort;
+                var port = _mailSettings.MailPort == 0 ? int.Parse(Environment.GetEnvironmentVariable("MailPort")!) : _mailSettings.MailPort;
                 var password = _mailSettings.MailPassword ?? Environment.GetEnvironmentVariable("MailPassword");
                 smtp.Connect(host, port, MailKit.Security.SecureSocketOptions.StartTls);
                 smtp.Authenticate(emailSender, password);
