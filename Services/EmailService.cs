@@ -12,28 +12,15 @@ namespace WeBlog.Services
 
         public EmailService(IOptions<MailSettings> mailSettings)
         {
-            if (mailSettings != null && mailSettings.Value != null)
-            {
-                _mailSettings = mailSettings.Value;
-            }
-            else
-            {
-                _mailSettings = new MailSettings
-                {
-                    MailAddress = Environment.GetEnvironmentVariable("MailAddress"),
-                    DisplayName = Environment.GetEnvironmentVariable("DisplayName"),
-                    MailPassword = Environment.GetEnvironmentVariable("MailPassword"),
-                    MailHost = Environment.GetEnvironmentVariable("MailHost"),
-                    MailPort = int.Parse(Environment.GetEnvironmentVariable("MailPort"))
-                };
-            }
+             _mailSettings = mailSettings.Value;
         }
 
         public async Task SendContactEmailAsync(string emailFrom, string name, string subject, string htmlMessage)
         {
+            var emailSender = _mailSettings.MailAddress ?? Environment.GetEnvironmentVariable("MailAddress");
             var email = new MimeMessage();
-            email.Sender = MailboxAddress.Parse(_mailSettings.MailAddress);
-            email.To.Add(MailboxAddress.Parse(_mailSettings.MailAddress));
+            email.Sender = MailboxAddress.Parse(emailSender);
+            email.To.Add(MailboxAddress.Parse(emailSender));
             email.Subject = subject;
 
             var builder = new BodyBuilder();
@@ -42,18 +29,30 @@ namespace WeBlog.Services
             email.Body = builder.ToMessageBody();
 
             using var smtp = new SmtpClient();
-            smtp.Connect(_mailSettings.MailHost, _mailSettings.MailPort, MailKit.Security.SecureSocketOptions.StartTls);
-            smtp.Authenticate(_mailSettings.MailAddress, _mailSettings.MailPassword);
 
-            await smtp.SendAsync(email);
-
-            smtp.Disconnect(true);
+            try
+            {
+                var host = _mailSettings.MailHost ?? Environment.GetEnvironmentVariable("MailHost");
+                var port = _mailSettings.MailPort == 0 ? int.Parse(Environment.GetEnvironmentVariable("MailPort")) : _mailSettings.MailPort;
+                var password = _mailSettings.MailPassword ?? Environment.GetEnvironmentVariable("MailPassword");
+                smtp.Connect(host, port, MailKit.Security.SecureSocketOptions.StartTls);
+                smtp.Authenticate(emailSender, password);
+                await smtp.SendAsync(email);
+                smtp.Disconnect(true);
+            }
+            catch(Exception ex)
+            {
+                var error = ex.Message;
+                throw;
+            }
+            
         }
 
         public async Task SendEmailAsync(string emailTo, string subject, string htmlMessage)
         {
+            var emailSender = _mailSettings.MailAddress ?? Environment.GetEnvironmentVariable("MailAddress");
             var email = new MimeMessage();
-            email.Sender = MailboxAddress.Parse(_mailSettings.MailAddress);
+            email.Sender = MailboxAddress.Parse(emailSender);
             email.To.Add(MailboxAddress.Parse(emailTo));
             email.Subject = subject;
 
@@ -64,11 +63,22 @@ namespace WeBlog.Services
 
             email.Body = builder.ToMessageBody();
             using var smtp = new SmtpClient();
-            smtp.Connect(_mailSettings.MailHost, _mailSettings.MailPort, MailKit.Security.SecureSocketOptions.StartTls);
-            smtp.Authenticate(_mailSettings.MailAddress, _mailSettings.MailPassword);
 
-            await smtp.SendAsync(email);
-            smtp.Disconnect(true);
+            try
+            {
+                var host = _mailSettings.MailHost ?? Environment.GetEnvironmentVariable("MailHost");
+                var port = _mailSettings.MailPort == 0 ? int.Parse(Environment.GetEnvironmentVariable("MailPort")) : _mailSettings.MailPort;
+                var password = _mailSettings.MailPassword ?? Environment.GetEnvironmentVariable("MailPassword");
+                smtp.Connect(host, port, MailKit.Security.SecureSocketOptions.StartTls);
+                smtp.Authenticate(emailSender, password);
+                await smtp.SendAsync(email);
+                smtp.Disconnect(true);
+            }
+            catch (Exception ex)
+            {
+                var error = ex.Message;
+                throw;
+            }
         }
     }
 }
