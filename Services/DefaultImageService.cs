@@ -6,7 +6,7 @@ namespace WeBlog.Services
     {
         public string ContentType(IFormFile file)
         {
-            return file?.ContentType;
+            return file.ContentType;
         }
 
         public string DecodeImage(byte[] data, string type)
