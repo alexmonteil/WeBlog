@@ -1,7 +1,19 @@
 ﻿@page
 @model LockoutModel
+
+@using WeBlog.Services.Interfaces
+@using Microsoft.Extensions.Configuration
+@inject IImageService _imageService
+@inject IConfiguration _configuration
+
 @{
-    ViewData["Title"] = "Locked out";
+    ViewData["Title"] = "Account Locked";
+    ViewData["MainText"] = "This account is locked";
+    ViewData["SubText"] = "Contact the admin";
+
+    var defaultImage = await _imageService.EncodeImageAsync(_configuration["DefaultHomePageImage"]);
+    var defaultContentType = _configuration["DefaultHomePageImage"].Split('.')[1];
+    ViewData["HeaderImage"] = _imageService.DecodeImage(defaultImage, defaultContentType);
 }
 
 <header>
