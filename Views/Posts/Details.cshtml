@@ -219,48 +219,36 @@
                             <p class="small">@comment.Body</p>
                         }
 
-                        @* SECTION 4 : Can we render the edit button ? *@
+                        <div class="row g-0">
+                            <div class="col-12">
 
-                        @if(comment.Moderated is null && comment.Deleted is null && comment.BlogUserId == userManager.GetUserId(User))
-                        {
-                            <div>
-                                <button id="adminPills" data-bs-toggle="modal" data-bs-target="#editModal_@comment.Id" class="badge bg-success float-end fw-bold border-0">Edit</button>
+                            @* SECTION 4 : Can we render the edit button ? *@
+
+                            @if(comment.Moderated is null && comment.Deleted is null && comment.BlogUserId == userManager.GetUserId(User))
+                            {
+                                <button id="adminPills" data-bs-toggle="modal" data-bs-target="#editModal_@comment.Id" class="badge bg-success float-end fw-bold border-0 ms-2">Edit</button>
+                            }
+
+                            @* SECTION 5 : Can we render the unmoderate button ? *@
+
+                            @if(comment.Moderated is not null && (User.IsInRole(BlogRole.Administrator.ToString()) || User.IsInRole(BlogRole.Moderator.ToString())))
+                            {
+                                <form asp-controller="Comments" asp-action="Unmoderate" method="POST">
+                                    @Html.Hidden("Id", comment.Id)
+                                    @Html.Hidden("Slug", Model.Slug)
+                                    <button id="adminPills" type="submit" class="badge bg-info float-end fw-bold border-0 ms-2">Unmoderate</button>
+                                </form>
+                            }
+
+                            @* SECTION 6 : Can we render the moderate and delete buttons ? *@
+
+                            @if((User.IsInRole(BlogRole.Moderator.ToString()) || User.IsInRole(BlogRole.Administrator.ToString())) && comment.Deleted is null)
+                            {
+                                <button id="adminPills" type="button" class="badge bg-warning float-end fw-bold border-0 ms-2" data-bs-toggle="modal" data-bs-target="#moderateModal_@comment.Id">Moderate</button>  
+                                <button id="adminPills" type="button" class="badge bg-danger float-end border-0 ms-2" data-bs-toggle="modal" data-bs-target="#deleteModal_@comment.Id">Delete</button>
+                            }
                             </div>
-                        }
-
-                        @* SECTION 5 : Can we render the unmoderate button ? *@
-
-                        @if(comment.Moderated is not null && (User.IsInRole(BlogRole.Administrator.ToString()) || User.IsInRole(BlogRole.Moderator.ToString())))
-                        {
-                            <form asp-controller="Comments" asp-action="Unmoderate" method="POST">
-                                @Html.Hidden("Id", comment.Id)
-                                @Html.Hidden("Slug", Model.Slug)
-                                <div>
-                                    <button id="adminPills" type="submit" class="badge bg-info float-end fw-bold border-0">Unmoderate</button>
-                                </div>
-                            </form>
-                            
-                        }
-
-                        @* SECTION 6 : Can we render the moderate and delete buttons ? *@
-
-                        @if((User.IsInRole(BlogRole.Moderator.ToString()) || User.IsInRole(BlogRole.Administrator.ToString())) && comment.Deleted is null)
-                        {
-                           
-                            <div class="row g-0">
-                                <div class="col-2 col-xs-5">
-                                    <div class="d-grid gap-2">
-                                        <button id="adminPills" type="button" class="badge bg-warning fw-bold border-0" data-bs-toggle="modal" data-bs-target="#moderateModal_@comment.Id">Moderate</button>
-                                    </div>
-                                </div>
-                                <div class="col-2 col-xs-5 ms-5">
-                                    <div class="d-grid gap-2">
-                                        <button id="adminPills" type="button" class="badge bg-danger border-0" data-bs-toggle="modal" data-bs-target="#deleteModal_@comment.Id">Delete</button>
-                                    </div>
-                                </div>
-                            </div>
-                           
-                        }
+                        </div>
                     </div>
                 </div>
             </div>
